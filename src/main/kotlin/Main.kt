@@ -2,6 +2,7 @@ import methods.iterativebracketing.findInterval
 import methods.iterativebracketing.writeBisection
 import methods.iterativebracketing.writeFalsePosition
 import org.mariuszgromada.math.mxparser.Expression
+import java.math.BigDecimal
 
 fun main() {
     iterativeBracketing(
@@ -26,8 +27,8 @@ fun iterativeBracketing(
     val interval = expression.findInterval()
     iterativeBracketing(
         expression = expression,
-        initialXL = interval.first.toDouble(),
-        initialXR = interval.second.toDouble(),
+        initialXL = interval.first.toBigDecimal(),
+        initialXR = interval.second.toBigDecimal(),
         numberOfIterations = numberOfIterations,
         runBisection = runBisection,
         runFalsePosition = runFalsePosition,
@@ -36,8 +37,8 @@ fun iterativeBracketing(
 
 fun iterativeBracketing(
     expression: Expression,
-    initialXL: Double,
-    initialXR: Double,
+    initialXL: BigDecimal,
+    initialXR: BigDecimal,
     numberOfIterations: Int,
     runBisection: Boolean,
     runFalsePosition: Boolean,
@@ -69,14 +70,14 @@ fun interactiveIterativeBracketing() {
         println("xR = ${interval.second}")
     }
 
-    val xL = interval?.first?.toDouble() ?: run {
+    val xL = interval?.first?.toBigDecimal() ?: run {
         print("xL = ")
-        readln().toDouble()
+        readln().toBigDecimal()
     }
 
-    val xR = interval?.second?.toDouble() ?: run {
+    val xR = interval?.second?.toBigDecimal() ?: run {
         print("xR = ")
-        readln().toDouble()
+        readln().toBigDecimal()
     }
 
     print("i = ")

@@ -1,6 +1,9 @@
 package methods.iterativebracketing
 
+import methods.DIVISION_ROUNDING_SCALE
 import org.mariuszgromada.math.mxparser.Expression
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 /**
  * Uses the false position method to approximate a solution of a function
@@ -13,9 +16,9 @@ import org.mariuszgromada.math.mxparser.Expression
  *
  * @return is the list of all the false position iterations
  */
-fun Expression.falsePosition(initialXL: Double, initialXR: Double, numberOfIterations: Int) =
+fun Expression.falsePosition(initialXL: BigDecimal, initialXR: BigDecimal, numberOfIterations: Int) =
     iterativeBracketing(initialXL, initialXR, numberOfIterations) { xL, xR, yL, yR ->
-        xL + (xR - xL) * (yL / (yL - yR))
+        xL + (xR - xL) * (yL.divide(yL - yR, DIVISION_ROUNDING_SCALE, RoundingMode.HALF_EVEN))
     }
 
 /**
@@ -27,7 +30,7 @@ fun Expression.falsePosition(initialXL: Double, initialXR: Double, numberOfItera
  * @param initialXR is the right x of your interval
  * @param numberOfIterations is the number of times you want to run the algorithm
  */
-fun Expression.writeFalsePosition(initialXL: Double, initialXR: Double, numberOfIterations: Int) {
+fun Expression.writeFalsePosition(initialXL: BigDecimal, initialXR: BigDecimal, numberOfIterations: Int) {
     writeFile(
         initialXL = initialXL,
         initialXR = initialXR,

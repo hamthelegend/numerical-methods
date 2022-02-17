@@ -1,6 +1,9 @@
 package methods.iterativebracketing
 
+import methods.DIVISION_ROUNDING_SCALE
 import org.mariuszgromada.math.mxparser.Expression
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 /**
  * Uses the bisection method to approximate a solution of a function
@@ -13,9 +16,9 @@ import org.mariuszgromada.math.mxparser.Expression
  *
  * @return is the list of all the bisection iterations
  */
-fun Expression.bisection(initialXL: Double, initialXR: Double, numberOfIterations: Int) =
+fun Expression.bisection(initialXL: BigDecimal, initialXR: BigDecimal, numberOfIterations: Int) =
     iterativeBracketing(initialXL, initialXR, numberOfIterations) { xL, xR, _, _ ->
-        (xL + xR) / 2
+        (xL + xR).divide(2.0.toBigDecimal(), DIVISION_ROUNDING_SCALE, RoundingMode.HALF_EVEN)
     }
 
 
@@ -28,7 +31,7 @@ fun Expression.bisection(initialXL: Double, initialXR: Double, numberOfIteration
  * @param initialXR is the right x of your interval
  * @param numberOfIterations is the number of times you want to run the algorithm
  */
-fun Expression.writeBisection(initialXL: Double, initialXR: Double, numberOfIterations: Int) {
+fun Expression.writeBisection(initialXL: BigDecimal, initialXR: BigDecimal, numberOfIterations: Int) {
     writeFile(
         initialXL = initialXL,
         initialXR = initialXR,

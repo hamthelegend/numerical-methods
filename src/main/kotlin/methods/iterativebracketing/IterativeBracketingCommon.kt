@@ -3,12 +3,13 @@ package methods.iterativebracketing
 import methods.calculate
 import org.mariuszgromada.math.mxparser.Expression
 import java.io.File
+import java.math.BigDecimal
 
 /**
  * An exception that is thrown when a bracket does not contain a 0 between the interval
  * The negative value must be on your xL and the positive value must be on your xR, or you will get this exception
  */
-class NoZeroInBracketException(xL: Double, xR: Double, yL: Double, yR: Double) :
+class NoZeroInBracketException(xL: BigDecimal, xR: BigDecimal, yL: BigDecimal, yR: BigDecimal) :
     Exception("There is no 0 between f($xL) = $yL and f($xR) = $yR")
 
 /**
@@ -38,12 +39,12 @@ data class BracketIterationResult(val iterations: List<BracketIteration>) {
  * A data class that stores the result of a single iteration of an iterative bracketing numerical method
  */
 data class BracketIteration(
-    val xL: Double,
-    val xR: Double,
-    val yL: Double,
-    val yR: Double,
-    val xN: Double,
-    val yN: Double,
+    val xL: BigDecimal,
+    val xR: BigDecimal,
+    val yL: BigDecimal,
+    val yR: BigDecimal,
+    val xN: BigDecimal,
+    val yN: BigDecimal,
 ) {
     /**
      * Writes the iteration into a single-line CSV string
@@ -65,10 +66,10 @@ data class BracketIteration(
  * @return is the list of all the iterations
  */
 fun Expression.iterativeBracketing(
-    initialXL: Double,
-    initialXR: Double,
+    initialXL: BigDecimal,
+    initialXR: BigDecimal,
     numberOfIterations: Int,
-    xNFormula: (Double, Double, Double, Double) -> Double,
+    xNFormula: (BigDecimal, BigDecimal, BigDecimal, BigDecimal) -> BigDecimal,
 ): BracketIterationResult {
 
     val iterations = mutableListOf<BracketIteration>()
@@ -81,14 +82,14 @@ fun Expression.iterativeBracketing(
         val yL = calculate(xL)
         val yR = calculate(xR)
 
-        if (0.0 !in yL..yR) throw NoZeroInBracketException(xL, xR, yL, yR)
+        if (BigDecimal.ZERO !in yL..yR) throw NoZeroInBracketException(xL, xR, yL, yR)
 
         val xN = xNFormula(xL, xR, yL, yR)
         val yN = calculate(xN)
 
         iterations.add(BracketIteration(xL = xL, xR = xR, yL = yL, yR = yR, xN = xN, yN = yN))
 
-        if (0.0 in yL..yN) xR = xN
+        if (BigDecimal.ZERO in yL..yN) xR = xN
         else xL = xN
 
     }
@@ -102,22 +103,22 @@ fun Expression.iterativeBracketing(
  * WARNING: This function is not guaranteed to work
  */
 fun Expression.findInterval(): Pair<Int, Int> {
-    val y0 = calculate(0.0)
+    val y0 = calculate(BigDecimal.ZERO)
 
-    if (y0 >= 0) {
+    if (y0 >= BigDecimal.ZERO) {
         var x = 0
-        var y = calculate(0.0)
-        while (y >= 0) {
+        var y = calculate(BigDecimal.ZERO)
+        while (y >= BigDecimal.ZERO) {
             x--
-            y = calculate(x.toDouble())
+            y = calculate(x.toBigDecimal())
         }
         return x to x + 1
     } else {
         var x = 0
-        var y = calculate(0.0)
-        while (y < 0) {
+        var y = calculate(BigDecimal.ZERO)
+        while (y < BigDecimal.ZERO) {
             x++
-            y = calculate(x.toDouble())
+            y = calculate(x.toBigDecimal())
         }
         return x - 1 to x
     }
@@ -136,11 +137,11 @@ fun Expression.findInterval(): Pair<Int, Int> {
  * @param method is a lambda (initialXL, initialXR, numberOfIterations) that calls an iterative bracketing numerical method
  */
 fun Expression.writeFile(
-    initialXL: Double,
-    initialXR: Double,
+    initialXL: BigDecimal,
+    initialXR: BigDecimal,
     numberOfIterations: Int,
     methodName: String,
-    method: Expression.(Double, Double, Int) -> BracketIterationResult
+    method: Expression.(BigDecimal, BigDecimal, Int) -> BracketIterationResult
 ) {
     val result = this.method(initialXL, initialXR, numberOfIterations)
     println("$methodName: x ≈ ${result.iterations.last().xN}")

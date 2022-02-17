@@ -15,6 +15,7 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     implementation("org.mariuszgromada.math:MathParser.org-mXparser:4.4.2")
+    implementation("com.mpobjects:bdparsii:1.0.0")
 }
 
 tasks.test {

@@ -1,9 +1,13 @@
 package methods
 
+import com.mpobjects.bdparsii.eval.Parser
+import com.mpobjects.bdparsii.eval.Scope
 import org.mariuszgromada.math.mxparser.Expression
-import org.mariuszgromada.math.mxparser.Function
+import java.math.BigDecimal
 import kotlin.math.pow
 import kotlin.math.roundToInt
+
+val DIVISION_ROUNDING_SCALE = 256
 
 /**
  * Calculates the value of an expression that is a function of x, given x
@@ -15,10 +19,12 @@ import kotlin.math.roundToInt
  *
  * @return the answer to f(x) given x
  */
-fun Expression.calculate(x: Double, functionName: String = "f"): Double {
-    val function = Function("$functionName(x) = $expressionString")
-    val functionCallExpression = Expression("$functionName($x)", function)
-    return functionCallExpression.calculate()
+fun Expression.calculate(x: BigDecimal): BigDecimal {
+    val scope = Scope()
+    val xVariable = scope.getVariable("x")
+    val expression = Parser.parse(expressionString, scope)
+    xVariable.value = x
+    return expression.evaluate()
 }
 
 /**
