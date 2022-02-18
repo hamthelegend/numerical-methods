@@ -6,7 +6,7 @@ import java.math.BigDecimal
 
 fun main() {
     iterativeBracketing(
-        expression = Expression("x * e^x - cos(x)"),
+        expression = Expression("x^2 - e"),
 //        initialXL = 0.0,
 //        initialXR = 1.0,
         numberOfIterations = 100,

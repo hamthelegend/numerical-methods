@@ -4,10 +4,12 @@ import com.mpobjects.bdparsii.eval.Parser
 import com.mpobjects.bdparsii.eval.Scope
 import org.mariuszgromada.math.mxparser.Expression
 import java.math.BigDecimal
+import java.math.RoundingMode
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-val DIVISION_ROUNDING_SCALE = 256
+val DEFAULT_SCALE = 64
+val DEFAULT_ROUNDING_MODE = RoundingMode.HALF_EVEN
 
 /**
  * Calculates the value of an expression that is a function of x, given x
@@ -15,16 +17,21 @@ val DIVISION_ROUNDING_SCALE = 256
  * @receiver is the expression that you want to solve; f(x) = [this]
  *
  * @param x is the value of x that you will substitute to the expression
- * @param functionName is the name of the function; currently unused
+ * @param scale is the scale that the BigDecimal will use
+ * @param roundingMode is the RoundingMode that the BigDecimal will use
  *
  * @return the answer to f(x) given x
  */
-fun Expression.calculate(x: BigDecimal): BigDecimal {
+fun Expression.calculate(
+    x: BigDecimal,
+    scale: Int = DEFAULT_SCALE,
+    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE
+): BigDecimal {
     val scope = Scope()
     val xVariable = scope.getVariable("x")
     val expression = Parser.parse(expressionString, scope)
     xVariable.value = x
-    return expression.evaluate()
+    return expression.evaluate().setScale(scale, roundingMode)
 }
 
 /**

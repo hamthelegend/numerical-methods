@@ -1,9 +1,12 @@
 package methods.iterativebracketing
 
+import methods.DEFAULT_ROUNDING_MODE
+import methods.DEFAULT_SCALE
 import methods.calculate
 import org.mariuszgromada.math.mxparser.Expression
 import java.io.File
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 /**
  * An exception that is thrown when a bracket does not contain a 0 between the interval
@@ -61,6 +64,8 @@ data class BracketIteration(
  * @param initialXL is the left x of your interval
  * @param initialXR is the right x of your interval
  * @param numberOfIterations is the number of times you want to run the algorithm
+ * @param scale is the scale that the BigDecimal will use
+ * @param roundingMode is the RoundingMode that the BigDecimal will use
  * @param xNFormula is a lambda that accepts 4 parameters (xL, xR, yL, yR) to calculate the new x approximation
  *
  * @return is the list of all the iterations
@@ -69,23 +74,25 @@ fun Expression.iterativeBracketing(
     initialXL: BigDecimal,
     initialXR: BigDecimal,
     numberOfIterations: Int,
+    scale: Int = DEFAULT_SCALE,
+    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
     xNFormula: (BigDecimal, BigDecimal, BigDecimal, BigDecimal) -> BigDecimal,
 ): BracketIterationResult {
 
     val iterations = mutableListOf<BracketIteration>()
 
-    var xL = initialXL
-    var xR = initialXR
+    var xL = initialXL.setScale(scale, roundingMode)
+    var xR = initialXR.setScale(scale, roundingMode)
 
     for (i in 1..numberOfIterations) {
 
-        val yL = calculate(xL)
-        val yR = calculate(xR)
+        val yL = calculate(xL, scale, roundingMode)
+        val yR = calculate(xR, scale, roundingMode)
 
         if (BigDecimal.ZERO !in yL..yR) throw NoZeroInBracketException(xL, xR, yL, yR)
 
         val xN = xNFormula(xL, xR, yL, yR)
-        val yN = calculate(xN)
+        val yN = calculate(xN, scale, roundingMode)
 
         iterations.add(BracketIteration(xL = xL, xR = xR, yL = yL, yR = yR, xN = xN, yN = yN))
 

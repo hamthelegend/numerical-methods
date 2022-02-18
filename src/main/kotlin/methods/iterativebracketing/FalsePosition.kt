@@ -1,6 +1,7 @@
 package methods.iterativebracketing
 
-import methods.DIVISION_ROUNDING_SCALE
+import methods.DEFAULT_ROUNDING_MODE
+import methods.DEFAULT_SCALE
 import org.mariuszgromada.math.mxparser.Expression
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -13,12 +14,20 @@ import java.math.RoundingMode
  * @param initialXL is the left x of your interval
  * @param initialXR is the right x of your interval
  * @param numberOfIterations is the number of times you want to run the algorithm
+ * @param scale is the scale that the BigDecimal will use
+ * @param roundingMode is the RoundingMode that the BigDecimal will use
  *
  * @return is the list of all the false position iterations
  */
-fun Expression.falsePosition(initialXL: BigDecimal, initialXR: BigDecimal, numberOfIterations: Int) =
+fun Expression.falsePosition(
+    initialXL: BigDecimal,
+    initialXR: BigDecimal,
+    numberOfIterations: Int,
+    scale: Int = DEFAULT_SCALE,
+    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
+) =
     iterativeBracketing(initialXL, initialXR, numberOfIterations) { xL, xR, yL, yR ->
-        xL + (xR - xL) * (yL.divide(yL - yR, DIVISION_ROUNDING_SCALE, RoundingMode.HALF_EVEN))
+        (xL + (xR - xL) * (yL / (yL - yR).setScale(scale, roundingMode))).setScale(scale, roundingMode)
     }
 
 /**
