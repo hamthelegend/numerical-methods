@@ -68,7 +68,7 @@ fun Expression.iterativeBracketing(
     initialXL: Double,
     initialXR: Double,
     numberOfIterations: Int,
-    xNFormula: (Double, Double, Double, Double) -> Double,
+    xNFormula: (xL: Double, xR: Double, yL: Double, yR: Double) -> Double,
 ): BracketIterationResult {
 
     val iterations = mutableListOf<BracketIteration>()
@@ -129,23 +129,15 @@ fun Expression.findInterval(): Pair<Int, Int> {
  *
  * @receiver is the expression that you want to solve; f(x) = [this]
  *
- * @param initialXL is the left x of your interval
- * @param initialXR is the right x of your interval
- * @param numberOfIterations is the number of times you want to run the algorithm
  * @param methodName is the name of the iterative bracketing numerical method
- * @param method is a lambda (initialXL, initialXR, numberOfIterations) that calls an iterative bracketing numerical method
+ * @param this@writeFile is a lambda (initialXL, initialXR, numberOfIterations) that calls an iterative bracketing numerical method
  */
-fun Expression.writeFile(
-    initialXL: Double,
-    initialXR: Double,
-    numberOfIterations: Int,
+fun BracketIterationResult.writeFile(
     methodName: String,
-    method: Expression.(Double, Double, Int) -> BracketIterationResult
 ) {
-    val result = this.method(initialXL, initialXR, numberOfIterations)
-    println("$methodName: x ≈ ${result.iterations.last().xN}")
+    println("$methodName: x ≈ ${iterations.last().xN}")
     val fileName = "$methodName.csv"
     val file = File(fileName)
-    file.writeText(result.toString())
+    file.writeText(toString())
     println("Answer written to $fileName")
 }

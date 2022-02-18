@@ -28,13 +28,10 @@ fun Expression.bisection(initialXL: Double, initialXR: Double, numberOfIteration
  * @param initialXR is the right x of your interval
  * @param numberOfIterations is the number of times you want to run the algorithm
  */
-fun Expression.writeBisection(initialXL: Double, initialXR: Double, numberOfIterations: Int) {
-    writeFile(
-        initialXL = initialXL,
-        initialXR = initialXR,
-        numberOfIterations = numberOfIterations,
-        methodName = "Bisection",
-    ) { xL, xR, i ->
-        bisection(xL, xR, i)
-    }
+fun Expression.writeBisection(
+    initialXL: Double,
+    initialXR: Double,
+    numberOfIterations: Int,
+) {
+    bisection(initialXL, initialXR, numberOfIterations).writeFile(methodName = "Bisection")
 }

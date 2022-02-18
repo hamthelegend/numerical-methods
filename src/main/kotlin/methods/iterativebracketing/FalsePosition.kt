@@ -27,13 +27,10 @@ fun Expression.falsePosition(initialXL: Double, initialXR: Double, numberOfItera
  * @param initialXR is the right x of your interval
  * @param numberOfIterations is the number of times you want to run the algorithm
  */
-fun Expression.writeFalsePosition(initialXL: Double, initialXR: Double, numberOfIterations: Int) {
-    writeFile(
-        initialXL = initialXL,
-        initialXR = initialXR,
-        numberOfIterations = numberOfIterations,
-        methodName = "FalsePosition",
-    ) { xL, xR, i ->
-        falsePosition(xL, xR, i)
-    }
+fun Expression.writeFalsePosition(
+    initialXL: Double,
+    initialXR: Double,
+    numberOfIterations: Int,
+) {
+    falsePosition(initialXL, initialXR, numberOfIterations).writeFile(methodName = "FalsePosition")
 }
