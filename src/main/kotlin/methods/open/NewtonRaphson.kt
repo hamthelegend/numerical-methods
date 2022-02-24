@@ -1,6 +1,6 @@
 package methods.open
 
-import methods.*
+import methods.common.*
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -18,10 +18,11 @@ data class NewtonRaphsonIterationResult(
 }
 
 data class NewtonRaphsonIteration(
-    override val xOld: BigDecimal,
+    val xOld: BigDecimal,
     val fXOld: BigDecimal,
     val fPrimeXOld: BigDecimal,
     override val xNew: BigDecimal,
+    override val error: BigDecimal,
     override val scale: Int,
     override val roundingMode: RoundingMode,
 ) : Iteration() {
@@ -43,12 +44,14 @@ fun Fx.runNewtonRaphson(
         val fXOld = calculate(xOld, calculationScale, roundingMode)
         val fPrimeXOld = derivative.calculate(xOld, calculationScale, roundingMode)
         val xNew = xOld - fXOld / fPrimeXOld
+        val error = calculateError(xOld = xOld, xNew = xNew, scale = calculationScale, roundingMode = roundingMode)
         iterations.add(
             NewtonRaphsonIteration(
-                xOld = xOld,
-                fXOld = fXOld,
-                fPrimeXOld = fPrimeXOld,
-                xNew = xNew,
+                xOld = xOld.setScale(outputScale, roundingMode),
+                fXOld = fXOld.setScale(outputScale, roundingMode),
+                fPrimeXOld = fPrimeXOld.setScale(outputScale, roundingMode),
+                xNew = xNew.setScale(outputScale, roundingMode),
+                error = error.setScale(outputScale, roundingMode),
                 scale = outputScale,
                 roundingMode = roundingMode
             )

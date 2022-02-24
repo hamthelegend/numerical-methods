@@ -1,6 +1,6 @@
 package methods.iterativebracketing
 
-import methods.*
+import methods.common.*
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -45,22 +45,16 @@ data class BracketIteration(
     val yR: BigDecimal,
     override val xNew: BigDecimal,
     val yNew: BigDecimal,
-    override val xOld: BigDecimal?,
+    override val error: BigDecimal?,
     override val scale: Int = DEFAULT_CALCULATION_SCALE,
     override val roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
 ) : Iteration() {
 
     /**
      * Writes the iteration into a single-line CSV string
-     * It follows the format "xL, xR, yL, yR, xNew, yNew"
+     * It follows the format "xL, xR, yL, yR, xNew, yNew, error"
      */
-    override fun toString() = "${xL.setScale(scale, roundingMode)}, " +
-            "${xR.setScale(scale, roundingMode)}, " +
-            "${yL.setScale(scale, roundingMode)}, " +
-            "${yR.setScale(scale, roundingMode)}, " +
-            "${xNew.setScale(scale, roundingMode)}, " +
-            "${yNew.setScale(scale, roundingMode)}, " +
-            "${error ?: "N/A"}"
+    override fun toString() = "$xL, $xR, $yL, $yR, $xNew, $yNew, $error"
 }
 
 /**
@@ -75,6 +69,7 @@ data class BracketIteration(
  *
  * @return is the list of all the iterations
  */
+// TODO: Make xL and xR switchable
 fun Fx.runIterativeBracketing(
     methodName: String,
     initialXL: BigDecimal,
@@ -103,17 +98,21 @@ fun Fx.runIterativeBracketing(
         val xNew = xNFormula(xL, xR, yL, yR)
         val yNew = calculate(xNew, calculationScale, roundingMode)
 
+        val error = xOld?.let {
+            calculateError(xOld = it, xNew = xNew, scale = calculationScale, roundingMode = roundingMode)
+        }
+
         iterations.add(
             BracketIteration(
-                xL = xL,
-                xR = xR,
-                yL = yL,
-                yR = yR,
-                xNew = xNew,
-                yNew = yNew,
-                xOld = xOld,
+                xL = xL.setScale(outputScale, roundingMode),
+                xR = xR.setScale(outputScale, roundingMode),
+                yL = yL.setScale(outputScale, roundingMode),
+                yR = yR.setScale(outputScale, roundingMode),
+                xNew = xNew.setScale(outputScale, roundingMode),
+                yNew = yNew.setScale(outputScale, roundingMode),
+                error = error?.setScale(outputScale, roundingMode),
                 scale = outputScale,
-                roundingMode = roundingMode
+                roundingMode = roundingMode,
             )
         )
 

@@ -1,6 +1,6 @@
 package methods.open
 
-import methods.*
+import methods.common.*
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -18,8 +18,9 @@ data class FixedPointIterationResult(
 }
 
 data class FixedPointIteration(
-    override val xOld: BigDecimal,
+    val xOld: BigDecimal,
     override val xNew: BigDecimal,
+    override val error: BigDecimal,
     override val scale: Int,
     override val roundingMode: RoundingMode,
 ) : Iteration() {
@@ -38,12 +39,14 @@ fun Fx.runFixedPoint(
     var xOld = initialX
     repeat(numberOfIterations) {
         val xNew = calculate(xOld, calculationScale, roundingMode)
+        val error = calculateError(xOld = xOld, xNew = xNew, scale = calculationScale, roundingMode = roundingMode)
         iterations.add(
             FixedPointIteration(
-                xOld = xOld,
-                xNew = xNew,
+                xOld = xOld.setScale(outputScale, roundingMode),
+                xNew = xNew.setScale(outputScale, roundingMode),
+                error = error.setScale(outputScale, roundingMode),
                 scale = outputScale,
-                roundingMode = roundingMode
+                roundingMode = roundingMode,
             )
         )
         xOld = xNew

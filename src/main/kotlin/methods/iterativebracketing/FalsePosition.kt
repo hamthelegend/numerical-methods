@@ -1,9 +1,9 @@
 package methods.iterativebracketing
 
-import methods.DEFAULT_CALCULATION_SCALE
-import methods.DEFAULT_OUTPUT_SCALE
-import methods.DEFAULT_ROUNDING_MODE
-import methods.Fx
+import methods.common.DEFAULT_CALCULATION_SCALE
+import methods.common.DEFAULT_OUTPUT_SCALE
+import methods.common.DEFAULT_ROUNDING_MODE
+import methods.common.Fx
 import java.math.BigDecimal
 import java.math.RoundingMode
 
