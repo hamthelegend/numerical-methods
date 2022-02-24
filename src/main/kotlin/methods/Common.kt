@@ -2,12 +2,32 @@ package methods
 
 import com.mpobjects.bdparsii.eval.Parser
 import com.mpobjects.bdparsii.eval.Scope
+import java.io.File
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 const val DEFAULT_CALCULATION_SCALE = 64
 const val DEFAULT_OUTPUT_SCALE = 4
 val DEFAULT_ROUNDING_MODE = RoundingMode.HALF_UP
+
+abstract class IterationResult {
+    abstract val methodName: String
+    abstract val iterations: List<Iteration>
+
+    fun writeFile() {
+        println("$methodName: x ≈ ${iterations.last().xNew}")
+        val fileName = "$methodName.csv"
+        val file = File(fileName)
+        file.writeText(toString())
+        println("Answer written to $fileName")
+    }
+
+}
+
+abstract class Iteration {
+    abstract val xNew: BigDecimal
+    abstract override fun toString(): String
+}
 
 data class Fx(val expression: String)
 
