@@ -23,7 +23,7 @@ data class FixedPointIteration(
     override val scale: Int,
     override val roundingMode: RoundingMode,
 ) : Iteration() {
-    override fun toString() = "$xOld, $xNew, $error"
+    override fun toString() = "${xOld.setScale(scale, roundingMode)}, ${xNew.setScale(scale, roundingMode)}, $error"
 }
 
 fun Fx.runFixedPoint(
