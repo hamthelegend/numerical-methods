@@ -1,5 +1,6 @@
 package methods.iterativebracketing
 
+import methods.DEFAULT_OUTPUT_SCALE
 import methods.DEFAULT_ROUNDING_MODE
 import methods.DEFAULT_SCALE
 import org.mariuszgromada.math.mxparser.Expression
@@ -14,8 +15,6 @@ import java.math.RoundingMode
  * @param initialXL is the left x of your interval
  * @param initialXR is the right x of your interval
  * @param numberOfIterations is the number of times you want to run the algorithm
- * @param scale is the scale that the BigDecimal will use
- * @param roundingMode is the RoundingMode that the BigDecimal will use
  *
  * @return is the list of all the false position iterations
  */
@@ -24,10 +23,18 @@ fun Expression.falsePosition(
     initialXR: BigDecimal,
     numberOfIterations: Int,
     scale: Int = DEFAULT_SCALE,
+    outputScale: Int = DEFAULT_OUTPUT_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
 ) =
-    iterativeBracketing(initialXL, initialXR, numberOfIterations) { xL, xR, yL, yR ->
-        (xL + (xR - xL) * (yL / (yL - yR).setScale(scale, roundingMode))).setScale(scale, roundingMode)
+    iterativeBracketing(
+        initialXL = initialXL,
+        initialXR = initialXR,
+        numberOfIterations = numberOfIterations,
+        calculationScale = scale,
+        outputScale = outputScale,
+        roundingMode = roundingMode
+    ) { xL, xR, yL, yR ->
+        (xL + (xR - xL) * (yL.divide(yL - yR, scale, roundingMode))).setScale(scale, roundingMode)
     }
 
 /**
@@ -39,13 +46,20 @@ fun Expression.falsePosition(
  * @param initialXR is the right x of your interval
  * @param numberOfIterations is the number of times you want to run the algorithm
  */
-fun Expression.writeFalsePosition(initialXL: BigDecimal, initialXR: BigDecimal, numberOfIterations: Int) {
-    writeFile(
+fun Expression.writeFalsePosition(
+    initialXL: BigDecimal,
+    initialXR: BigDecimal,
+    numberOfIterations: Int,
+    scale: Int = DEFAULT_SCALE,
+    outputScale: Int = DEFAULT_OUTPUT_SCALE,
+    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
+) {
+    falsePosition(
         initialXL = initialXL,
         initialXR = initialXR,
         numberOfIterations = numberOfIterations,
-        methodName = "FalsePosition",
-    ) { xL, xR, i ->
-        falsePosition(xL, xR, i)
-    }
+        scale = scale,
+        outputScale = outputScale,
+        roundingMode = roundingMode
+    ).writeFile(methodName = "FalsePosition")
 }

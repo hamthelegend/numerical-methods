@@ -5,11 +5,10 @@ import com.mpobjects.bdparsii.eval.Scope
 import org.mariuszgromada.math.mxparser.Expression
 import java.math.BigDecimal
 import java.math.RoundingMode
-import kotlin.math.pow
-import kotlin.math.roundToInt
 
-val DEFAULT_SCALE = 64
-val DEFAULT_ROUNDING_MODE = RoundingMode.HALF_EVEN
+const val DEFAULT_SCALE = 64
+const val DEFAULT_OUTPUT_SCALE = 4
+val DEFAULT_ROUNDING_MODE = RoundingMode.HALF_UP
 
 /**
  * Calculates the value of an expression that is a function of x, given x
@@ -25,26 +24,11 @@ val DEFAULT_ROUNDING_MODE = RoundingMode.HALF_EVEN
 fun Expression.calculate(
     x: BigDecimal,
     scale: Int = DEFAULT_SCALE,
-    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE
+    roundingMode: RoundingMode,
 ): BigDecimal {
     val scope = Scope()
     val xVariable = scope.getVariable("x")
     val expression = Parser.parse(expressionString, scope)
     xVariable.value = x
     return expression.evaluate().setScale(scale, roundingMode)
-}
-
-/**
- * A function to round a double to a number of decimal places
- *
- * @receiver is the value that you want to round
- *
- * @param decimalPlaces is the number of digits after the decimal point that you want to preserve
- *
- * @return the rounded value
- */
-@Suppress("unused")
-fun Double.roundTo(decimalPlaces: Int): Double {
-    val factor = 10.0.pow(decimalPlaces.toDouble())
-    return (this * factor).roundToInt() / factor
 }

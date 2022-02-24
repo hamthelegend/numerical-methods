@@ -1,5 +1,6 @@
 package methods.iterativebracketing
 
+import methods.DEFAULT_OUTPUT_SCALE
 import methods.DEFAULT_ROUNDING_MODE
 import methods.DEFAULT_SCALE
 import methods.calculate
@@ -49,6 +50,24 @@ data class BracketIteration(
     val xN: BigDecimal,
     val yN: BigDecimal,
 ) {
+    constructor(
+        xL: BigDecimal,
+        xR: BigDecimal,
+        yL: BigDecimal,
+        yR: BigDecimal,
+        xN: BigDecimal,
+        yN: BigDecimal,
+        scale: Int,
+        roundingMode: RoundingMode,
+    ) : this(
+        xL = xL.setScale(scale, roundingMode),
+        xR = xR.setScale(scale, roundingMode),
+        yL = yL.setScale(scale, roundingMode),
+        yR = yR.setScale(scale, roundingMode),
+        xN = xN.setScale(scale, roundingMode),
+        yN = yN.setScale(scale, roundingMode),
+    )
+
     /**
      * Writes the iteration into a single-line CSV string
      * It follows the format "xL, xR, yL, yR, xN, yN"
@@ -64,8 +83,6 @@ data class BracketIteration(
  * @param initialXL is the left x of your interval
  * @param initialXR is the right x of your interval
  * @param numberOfIterations is the number of times you want to run the algorithm
- * @param scale is the scale that the BigDecimal will use
- * @param roundingMode is the RoundingMode that the BigDecimal will use
  * @param xNFormula is a lambda that accepts 4 parameters (xL, xR, yL, yR) to calculate the new x approximation
  *
  * @return is the list of all the iterations
@@ -74,27 +91,39 @@ fun Expression.iterativeBracketing(
     initialXL: BigDecimal,
     initialXR: BigDecimal,
     numberOfIterations: Int,
-    scale: Int = DEFAULT_SCALE,
+    calculationScale: Int = DEFAULT_SCALE,
+    outputScale: Int = DEFAULT_OUTPUT_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
-    xNFormula: (BigDecimal, BigDecimal, BigDecimal, BigDecimal) -> BigDecimal,
+    xNFormula: (xL: BigDecimal, xR: BigDecimal, yL: BigDecimal, yR: BigDecimal) -> BigDecimal,
 ): BracketIterationResult {
 
     val iterations = mutableListOf<BracketIteration>()
 
-    var xL = initialXL.setScale(scale, roundingMode)
-    var xR = initialXR.setScale(scale, roundingMode)
+    var xL = initialXL
+    var xR = initialXR
 
     for (i in 1..numberOfIterations) {
 
-        val yL = calculate(xL, scale, roundingMode)
-        val yR = calculate(xR, scale, roundingMode)
+        val yL = calculate(xL, calculationScale, roundingMode)
+        val yR = calculate(xR, calculationScale, roundingMode)
 
         if (BigDecimal.ZERO !in yL..yR) throw NoZeroInBracketException(xL, xR, yL, yR)
 
         val xN = xNFormula(xL, xR, yL, yR)
-        val yN = calculate(xN, scale, roundingMode)
+        val yN = calculate(xN, calculationScale, roundingMode)
 
-        iterations.add(BracketIteration(xL = xL, xR = xR, yL = yL, yR = yR, xN = xN, yN = yN))
+        iterations.add(
+            BracketIteration(
+                xL = xL,
+                xR = xR,
+                yL = yL,
+                yR = yR,
+                xN = xN,
+                yN = yN,
+                scale = outputScale,
+                roundingMode = roundingMode
+            )
+        )
 
         if (BigDecimal.ZERO in yL..yN) xR = xN
         else xL = xN
@@ -109,23 +138,26 @@ fun Expression.iterativeBracketing(
  * Is a function that tries to find a good bracket interval
  * WARNING: This function is not guaranteed to work
  */
-fun Expression.findInterval(): Pair<Int, Int> {
-    val y0 = calculate(BigDecimal.ZERO)
+fun Expression.findInterval(
+    scale: Int = DEFAULT_SCALE,
+    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
+): Pair<Int, Int> {
+    val y0 = calculate(BigDecimal.ZERO, scale, roundingMode)
 
     if (y0 >= BigDecimal.ZERO) {
         var x = 0
-        var y = calculate(BigDecimal.ZERO)
+        var y = calculate(BigDecimal.ZERO, scale, roundingMode)
         while (y >= BigDecimal.ZERO) {
             x--
-            y = calculate(x.toBigDecimal())
+            y = calculate(x.toBigDecimal(), scale, roundingMode)
         }
         return x to x + 1
     } else {
         var x = 0
-        var y = calculate(BigDecimal.ZERO)
+        var y = calculate(BigDecimal.ZERO, scale, roundingMode)
         while (y < BigDecimal.ZERO) {
             x++
-            y = calculate(x.toBigDecimal())
+            y = calculate(x.toBigDecimal(), scale, roundingMode)
         }
         return x - 1 to x
     }
@@ -137,23 +169,15 @@ fun Expression.findInterval(): Pair<Int, Int> {
  *
  * @receiver is the expression that you want to solve; f(x) = [this]
  *
- * @param initialXL is the left x of your interval
- * @param initialXR is the right x of your interval
- * @param numberOfIterations is the number of times you want to run the algorithm
  * @param methodName is the name of the iterative bracketing numerical method
- * @param method is a lambda (initialXL, initialXR, numberOfIterations) that calls an iterative bracketing numerical method
+ * @param this@writeFile is a lambda (initialXL, initialXR, numberOfIterations) that calls an iterative bracketing numerical method
  */
-fun Expression.writeFile(
-    initialXL: BigDecimal,
-    initialXR: BigDecimal,
-    numberOfIterations: Int,
+fun BracketIterationResult.writeFile(
     methodName: String,
-    method: Expression.(BigDecimal, BigDecimal, Int) -> BracketIterationResult
 ) {
-    val result = this.method(initialXL, initialXR, numberOfIterations)
-    println("$methodName: x ≈ ${result.iterations.last().xN}")
+    println("$methodName: x ≈ ${iterations.last().xN}")
     val fileName = "$methodName.csv"
     val file = File(fileName)
-    file.writeText(result.toString())
+    file.writeText(toString())
     println("Answer written to $fileName")
 }
