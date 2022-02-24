@@ -1,16 +1,17 @@
+
 import methods.DEFAULT_OUTPUT_SCALE
 import methods.DEFAULT_ROUNDING_MODE
 import methods.DEFAULT_SCALE
+import methods.Fx
 import methods.iterativebracketing.findInterval
 import methods.iterativebracketing.writeBisection
 import methods.iterativebracketing.writeFalsePosition
-import org.mariuszgromada.math.mxparser.Expression
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 fun main() {
     iterativeBracketing(
-        expression = Expression("x * exp(x) - cos(x)"),
+        expression = Fx("x * exp(x) - cos(x)"),
 //        initialXL = 0.0,
 //        initialXR = 1.0,
         numberOfIterations = 100,
@@ -23,7 +24,7 @@ fun main() {
 
 @Suppress("unused")
 fun iterativeBracketing(
-    expression: Expression,
+    expression: Fx,
     numberOfIterations: Int,
     scale: Int = DEFAULT_SCALE,
     outputScale: Int = DEFAULT_OUTPUT_SCALE,
@@ -45,7 +46,7 @@ fun iterativeBracketing(
 }
 
 fun iterativeBracketing(
-    expression: Expression,
+    expression: Fx,
     initialXL: BigDecimal,
     initialXR: BigDecimal,
     numberOfIterations: Int,
@@ -89,7 +90,7 @@ fun interactiveIterativeBracketing() {
     val scale = readln().toInt()
 
     print("f(x) = ")
-    val expression = Expression(readln())
+    val expression = Fx(readln())
 
     print("Do you want to automatically get xR and xL? It is not guaranteed to work. (y/n) ")
     val useBracketFinder = readln()

@@ -3,7 +3,7 @@ package methods.iterativebracketing
 import methods.DEFAULT_OUTPUT_SCALE
 import methods.DEFAULT_ROUNDING_MODE
 import methods.DEFAULT_SCALE
-import org.mariuszgromada.math.mxparser.Expression
+import methods.Fx
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -18,7 +18,7 @@ import java.math.RoundingMode
  *
  * @return is the list of all the false position iterations
  */
-fun Expression.falsePosition(
+fun Fx.falsePosition(
     initialXL: BigDecimal,
     initialXR: BigDecimal,
     numberOfIterations: Int,
@@ -46,7 +46,7 @@ fun Expression.falsePosition(
  * @param initialXR is the right x of your interval
  * @param numberOfIterations is the number of times you want to run the algorithm
  */
-fun Expression.writeFalsePosition(
+fun Fx.writeFalsePosition(
     initialXL: BigDecimal,
     initialXR: BigDecimal,
     numberOfIterations: Int,

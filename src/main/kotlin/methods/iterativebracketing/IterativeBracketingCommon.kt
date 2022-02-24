@@ -1,10 +1,6 @@
 package methods.iterativebracketing
 
-import methods.DEFAULT_OUTPUT_SCALE
-import methods.DEFAULT_ROUNDING_MODE
-import methods.DEFAULT_SCALE
-import methods.calculate
-import org.mariuszgromada.math.mxparser.Expression
+import methods.*
 import java.io.File
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -87,7 +83,7 @@ data class BracketIteration(
  *
  * @return is the list of all the iterations
  */
-fun Expression.iterativeBracketing(
+fun Fx.iterativeBracketing(
     initialXL: BigDecimal,
     initialXR: BigDecimal,
     numberOfIterations: Int,
@@ -138,7 +134,7 @@ fun Expression.iterativeBracketing(
  * Is a function that tries to find a good bracket interval
  * WARNING: This function is not guaranteed to work
  */
-fun Expression.findInterval(
+fun Fx.findInterval(
     scale: Int = DEFAULT_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
 ): Pair<Int, Int> {
@@ -170,7 +166,6 @@ fun Expression.findInterval(
  * @receiver is the expression that you want to solve; f(x) = [this]
  *
  * @param methodName is the name of the iterative bracketing numerical method
- * @param this@writeFile is a lambda (initialXL, initialXR, numberOfIterations) that calls an iterative bracketing numerical method
  */
 fun BracketIterationResult.writeFile(
     methodName: String,
