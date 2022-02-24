@@ -9,7 +9,7 @@ data class FixedPointIterationResult(
 ) : IterationResult() {
     override val methodName = "Fixed Point"
     override fun toString(): String {
-        val stringBuilder = StringBuilder("i, xOld, xNew\n")
+        val stringBuilder = StringBuilder("i, xOld, xNew, error\n")
         for ((i, iteration) in iterations.withIndex()) {
             stringBuilder.append("${i + 1}, $iteration\n")
         }
@@ -17,14 +17,12 @@ data class FixedPointIterationResult(
     }
 }
 
-class FixedPointIteration(
-    xOld: BigDecimal,
-    xNew: BigDecimal,
+data class FixedPointIteration(
+    override val xOld: BigDecimal,
+    override val xNew: BigDecimal,
     override val scale: Int,
     override val roundingMode: RoundingMode,
 ) : Iteration() {
-    override val xOld = xOld.setScale(scale, roundingMode)
-    override val xNew = xNew.setScale(scale, roundingMode)
 
     override fun toString() = "$xOld, $xNew"
 }

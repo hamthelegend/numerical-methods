@@ -21,12 +21,12 @@ data class BracketIterationResult(override val methodName: String, override val 
 
     /**
      * Writes the result into a large CSV string
-     * Every iteration follows the format "i, xL, xR, yL, yR, xN, yN"
+     * Every iteration follows the format "i, xL, xR, yL, yR, xNew, yNew"
      * Every iteration is separated by a line break
      * Its result can be tabulated by applications like Excel
      */
     override fun toString(): String {
-        val stringBuilder = StringBuilder("i, xL, xR, yL, yR, xN, yN, |∈|\n")
+        val stringBuilder = StringBuilder("i, xL, xR, yL, yR, xNew, yNew, error\n")
         for ((i, iteration) in iterations.withIndex()) {
             stringBuilder.append("${i + 1}, $iteration\n")
         }
@@ -38,31 +38,29 @@ data class BracketIterationResult(override val methodName: String, override val 
 /**
  * A data class that stores the result of a single iteration of an iterative bracketing numerical method
  */
-class BracketIteration(
-    xL: BigDecimal,
-    xR: BigDecimal,
-    yL: BigDecimal,
-    yR: BigDecimal,
-    xNew: BigDecimal,
-    yNew: BigDecimal,
-    xOld: BigDecimal?,
+data class BracketIteration(
+    val xL: BigDecimal,
+    val xR: BigDecimal,
+    val yL: BigDecimal,
+    val yR: BigDecimal,
+    override val xNew: BigDecimal,
+    val yNew: BigDecimal,
+    override val xOld: BigDecimal?,
     override val scale: Int = DEFAULT_CALCULATION_SCALE,
     override val roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
 ) : Iteration() {
 
-    val xL = xL.setScale(scale, roundingMode)
-    val xR = xR.setScale(scale, roundingMode)
-    val yL = yL.setScale(scale, roundingMode)
-    val yR = yR.setScale(scale, roundingMode)
-    override val xNew = xNew.setScale(scale, roundingMode)
-    val yNew = yNew.setScale(scale, roundingMode)
-    override val xOld = xOld?.setScale(scale, roundingMode)
-
     /**
      * Writes the iteration into a single-line CSV string
-     * It follows the format "xL, xR, yL, yR, xN, yN"
+     * It follows the format "xL, xR, yL, yR, xNew, yNew"
      */
-    override fun toString() = "$xL, $xR, $yL, $yR, $xNew, $yNew, ${error ?: "N/A"}"
+    override fun toString() = "${xL.setScale(scale, roundingMode)}, " +
+            "${xR.setScale(scale, roundingMode)}, " +
+            "${yL.setScale(scale, roundingMode)}, " +
+            "${yR.setScale(scale, roundingMode)}, " +
+            "${xNew.setScale(scale, roundingMode)}, " +
+            "${yNew.setScale(scale, roundingMode)}, " +
+            "${error ?: "N/A"}"
 }
 
 /**
