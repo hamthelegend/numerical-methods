@@ -18,7 +18,7 @@ import java.math.RoundingMode
  *
  * @return is the list of all the false position iterations
  */
-fun Fx.falsePosition(
+fun Fx.runFalsePosition(
     initialXL: BigDecimal,
     initialXR: BigDecimal,
     numberOfIterations: Int,
@@ -26,7 +26,7 @@ fun Fx.falsePosition(
     outputScale: Int = DEFAULT_OUTPUT_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
 ) =
-    iterativeBracketing(
+    runIterativeBracketing(
         initialXL = initialXL,
         initialXR = initialXR,
         numberOfIterations = numberOfIterations,
@@ -54,7 +54,7 @@ fun Fx.writeFalsePosition(
     outputScale: Int = DEFAULT_OUTPUT_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
 ) {
-    falsePosition(
+    runFalsePosition(
         initialXL = initialXL,
         initialXR = initialXR,
         numberOfIterations = numberOfIterations,

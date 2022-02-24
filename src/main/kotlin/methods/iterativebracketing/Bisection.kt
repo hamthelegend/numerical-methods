@@ -18,7 +18,7 @@ import java.math.RoundingMode
  *
  * @return is the list of all the bisection iterations
  */
-fun Fx.bisection(
+fun Fx.runBisection(
     initialXL: BigDecimal,
     initialXR: BigDecimal,
     numberOfIterations: Int,
@@ -26,7 +26,7 @@ fun Fx.bisection(
     outputScale: Int = DEFAULT_OUTPUT_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
 ) =
-    iterativeBracketing(
+    runIterativeBracketing(
         initialXL = initialXL,
         initialXR = initialXR,
         numberOfIterations = numberOfIterations,
@@ -55,7 +55,7 @@ fun Fx.writeBisection(
     outputScale: Int = DEFAULT_OUTPUT_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
 ) {
-    bisection(
+    runBisection(
         initialXL = initialXL,
         initialXR = initialXR,
         numberOfIterations = numberOfIterations,

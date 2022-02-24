@@ -83,7 +83,7 @@ data class BracketIteration(
  *
  * @return is the list of all the iterations
  */
-fun Fx.iterativeBracketing(
+fun Fx.runIterativeBracketing(
     initialXL: BigDecimal,
     initialXR: BigDecimal,
     numberOfIterations: Int,
