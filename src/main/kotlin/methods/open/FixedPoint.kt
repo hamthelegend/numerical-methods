@@ -1,4 +1,4 @@
-package methods.openmethod
+package methods.open
 
 import methods.*
 import java.math.BigDecimal
@@ -23,7 +23,7 @@ data class FixedPointIteration(
     override val scale: Int,
     override val roundingMode: RoundingMode,
 ) : Iteration() {
-    override fun toString() = "${xOld.setScale(scale, roundingMode)}, ${xNew.setScale(scale, roundingMode)}, $error"
+    override fun toString() = "$xOld, $xNew, $error"
 }
 
 fun Fx.runFixedPoint(
@@ -35,13 +35,9 @@ fun Fx.runFixedPoint(
 ): FixedPointIterationResult {
 
     val iterations = mutableListOf<FixedPointIteration>()
-
     var xOld = initialX
-
     repeat(numberOfIterations) {
-
         val xNew = calculate(xOld, calculationScale, roundingMode)
-
         iterations.add(
             FixedPointIteration(
                 xOld = xOld,
@@ -50,23 +46,8 @@ fun Fx.runFixedPoint(
                 roundingMode = roundingMode
             )
         )
-
         xOld = xNew
-
     }
-
     return FixedPointIterationResult(iterations)
 
-}
-
-fun Fx.guessInitialX(
-    guessX: BigDecimal = BigDecimal.ZERO,
-    calculationScale: Int = DEFAULT_CALCULATION_SCALE,
-    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
-): BigDecimal = try {
-    calculate(guessX, calculationScale, roundingMode)
-    guessX
-} catch (e: ArithmeticException) {
-    val newGuessX = if (guessX > BigDecimal.ZERO) -guessX else guessX + BigDecimal.ONE
-    guessInitialX(newGuessX, calculationScale, roundingMode)
 }
