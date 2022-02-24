@@ -1,7 +1,7 @@
 
 import methods.DEFAULT_OUTPUT_SCALE
 import methods.DEFAULT_ROUNDING_MODE
-import methods.DEFAULT_SCALE
+import methods.DEFAULT_CALCULATION_SCALE
 import methods.Fx
 import methods.iterativebracketing.findInterval
 import methods.iterativebracketing.writeBisection
@@ -26,7 +26,7 @@ fun main() {
 fun iterativeBracketing(
     expression: Fx,
     numberOfIterations: Int,
-    scale: Int = DEFAULT_SCALE,
+    scale: Int = DEFAULT_CALCULATION_SCALE,
     outputScale: Int = DEFAULT_OUTPUT_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
     runBisection: Boolean,
@@ -50,7 +50,7 @@ fun iterativeBracketing(
     initialXL: BigDecimal,
     initialXR: BigDecimal,
     numberOfIterations: Int,
-    scale: Int = DEFAULT_SCALE,
+    scale: Int = DEFAULT_CALCULATION_SCALE,
     outputScale: Int = DEFAULT_OUTPUT_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
     runBisection: Boolean,

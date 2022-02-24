@@ -87,7 +87,7 @@ fun Fx.runIterativeBracketing(
     initialXL: BigDecimal,
     initialXR: BigDecimal,
     numberOfIterations: Int,
-    calculationScale: Int = DEFAULT_SCALE,
+    calculationScale: Int = DEFAULT_CALCULATION_SCALE,
     outputScale: Int = DEFAULT_OUTPUT_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
     xNFormula: (xL: BigDecimal, xR: BigDecimal, yL: BigDecimal, yR: BigDecimal) -> BigDecimal,
@@ -135,7 +135,7 @@ fun Fx.runIterativeBracketing(
  * WARNING: This function is not guaranteed to work
  */
 fun Fx.findInterval(
-    scale: Int = DEFAULT_SCALE,
+    scale: Int = DEFAULT_CALCULATION_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
 ): Pair<Int, Int> {
     val y0 = calculate(BigDecimal.ZERO, scale, roundingMode)

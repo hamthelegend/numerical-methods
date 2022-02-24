@@ -5,7 +5,7 @@ import com.mpobjects.bdparsii.eval.Scope
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-const val DEFAULT_SCALE = 64
+const val DEFAULT_CALCULATION_SCALE = 64
 const val DEFAULT_OUTPUT_SCALE = 4
 val DEFAULT_ROUNDING_MODE = RoundingMode.HALF_UP
 
@@ -24,7 +24,7 @@ data class Fx(val expression: String)
  */
 fun Fx.calculate(
     x: BigDecimal,
-    scale: Int = DEFAULT_SCALE,
+    scale: Int = DEFAULT_CALCULATION_SCALE,
     roundingMode: RoundingMode,
 ): BigDecimal {
     val scope = Scope()
