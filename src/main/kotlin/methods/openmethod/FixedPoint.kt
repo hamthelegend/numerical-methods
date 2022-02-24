@@ -17,9 +17,14 @@ data class FixedPointIterationResult(
     }
 }
 
-class FixedPointIteration(xO: BigDecimal, xN: BigDecimal, scale: Int, roundingMode: RoundingMode) : Iteration() {
-    val xOld = xO.setScale(scale, roundingMode)
-    override val xNew = xN.setScale(scale, roundingMode)
+class FixedPointIteration(
+    xOld: BigDecimal,
+    xNew: BigDecimal,
+    override val scale: Int,
+    override val roundingMode: RoundingMode,
+) : Iteration() {
+    override val xOld = xOld.setScale(scale, roundingMode)
+    override val xNew = xNew.setScale(scale, roundingMode)
 
     override fun toString() = "$xOld, $xNew"
 }
@@ -42,8 +47,8 @@ fun Fx.runFixedPoint(
 
         iterations.add(
             FixedPointIteration(
-                xO = xOld,
-                xN = xNew,
+                xOld = xOld,
+                xNew = xNew,
                 scale = outputScale,
                 roundingMode = roundingMode
             )

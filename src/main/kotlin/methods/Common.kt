@@ -24,8 +24,13 @@ abstract class IterationResult {
 
 }
 
-abstract class Iteration {
+abstract class Iteration() {
+    abstract val xOld: BigDecimal?
     abstract val xNew: BigDecimal
+    abstract val scale: Int
+    abstract val roundingMode: RoundingMode
+    val error: BigDecimal?
+        get() =  xOld?.minus(xNew)?.divide(xNew, scale, roundingMode)?.abs() // ((xNew - xOld?) / xNew).abs()
     abstract override fun toString(): String
 }
 

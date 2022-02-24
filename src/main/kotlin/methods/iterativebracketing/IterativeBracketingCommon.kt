@@ -26,7 +26,7 @@ data class BracketIterationResult(override val methodName: String, override val 
      * Its result can be tabulated by applications like Excel
      */
     override fun toString(): String {
-        val stringBuilder = StringBuilder("i, xL, xR, yL, yR, xN, yN\n")
+        val stringBuilder = StringBuilder("i, xL, xR, yL, yR, xN, yN, |∈|\n")
         for ((i, iteration) in iterations.withIndex()) {
             stringBuilder.append("${i + 1}, $iteration\n")
         }
@@ -43,24 +43,26 @@ class BracketIteration(
     xR: BigDecimal,
     yL: BigDecimal,
     yR: BigDecimal,
-    xN: BigDecimal,
-    yN: BigDecimal,
-    scale: Int = DEFAULT_CALCULATION_SCALE,
-    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
+    xNew: BigDecimal,
+    yNew: BigDecimal,
+    xOld: BigDecimal?,
+    override val scale: Int = DEFAULT_CALCULATION_SCALE,
+    override val roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
 ) : Iteration() {
 
     val xL = xL.setScale(scale, roundingMode)
     val xR = xR.setScale(scale, roundingMode)
     val yL = yL.setScale(scale, roundingMode)
     val yR = yR.setScale(scale, roundingMode)
-    override val xNew = xN.setScale(scale, roundingMode)
-    val yNew = yN.setScale(scale, roundingMode)
+    override val xNew = xNew.setScale(scale, roundingMode)
+    val yNew = yNew.setScale(scale, roundingMode)
+    override val xOld = xOld?.setScale(scale, roundingMode)
 
     /**
      * Writes the iteration into a single-line CSV string
      * It follows the format "xL, xR, yL, yR, xN, yN"
      */
-    override fun toString() = "$xL, $xR, $yL, $yR, $xNew, $yNew"
+    override fun toString() = "$xL, $xR, $yL, $yR, $xNew, $yNew, ${error ?: "N/A"}"
 }
 
 /**
@@ -91,6 +93,8 @@ fun Fx.runIterativeBracketing(
     var xL = initialXL
     var xR = initialXR
 
+    var xOld: BigDecimal? = null
+
     for (i in 1..numberOfIterations) {
 
         val yL = calculate(xL, calculationScale, roundingMode)
@@ -98,8 +102,8 @@ fun Fx.runIterativeBracketing(
 
         if (BigDecimal.ZERO !in yL..yR) throw NoZeroInBracketException(xL, xR, yL, yR)
 
-        val xN = xNFormula(xL, xR, yL, yR)
-        val yN = calculate(xN, calculationScale, roundingMode)
+        val xNew = xNFormula(xL, xR, yL, yR)
+        val yNew = calculate(xNew, calculationScale, roundingMode)
 
         iterations.add(
             BracketIteration(
@@ -107,15 +111,18 @@ fun Fx.runIterativeBracketing(
                 xR = xR,
                 yL = yL,
                 yR = yR,
-                xN = xN,
-                yN = yN,
+                xNew = xNew,
+                yNew = yNew,
+                xOld = xOld,
                 scale = outputScale,
                 roundingMode = roundingMode
             )
         )
 
-        if (BigDecimal.ZERO in yL..yN) xR = xN
-        else xL = xN
+        xOld = xNew
+
+        if (BigDecimal.ZERO in yL..yNew) xR = xNew
+        else xL = xNew
 
     }
 
