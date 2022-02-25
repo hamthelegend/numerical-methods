@@ -16,8 +16,14 @@ class NoZeroInBracketException(xL: BigDecimal, xR: BigDecimal, yL: BigDecimal, y
  *
  * A data class that extends [List] of [BracketIteration]
  */
-data class BracketIterationResult(override val methodName: String, override val iterations: List<BracketIteration>) :
-    IterationResult() {
+data class BracketIterationResult(
+    override val expression: Fx,
+    override val methodName: String,
+    override val iterations: List<BracketIteration>,
+) : IterationResult() {
+
+
+    override fun getEquationString(xLast: RoundedDecimal) = "$expression = 0"
 
     /**
      * Writes the result into a large CSV string
@@ -123,7 +129,7 @@ fun Fx.runIterativeBracketing(
 
     }
 
-    return BracketIterationResult(methodName, iterations)
+    return BracketIterationResult(this, methodName, iterations)
 
 }
 

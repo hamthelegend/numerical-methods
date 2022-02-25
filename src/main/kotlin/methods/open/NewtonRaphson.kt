@@ -5,9 +5,14 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 data class NewtonRaphsonIterationResult(
+    override val expression: Fx,
     override val iterations: List<NewtonRaphsonIteration>,
 ) : IterationResult() {
+
     override val methodName = "Newton Raphson"
+
+    override fun getEquationString(xLast: RoundedDecimal) = "$expression = 0"
+
     override fun toString(): String {
         val stringBuilder = StringBuilder("i, xOld, fXOld, fPrimeXOld, xNew, error\n")
         for ((i, iteration) in iterations.withIndex()) {
@@ -58,6 +63,6 @@ fun Fx.runNewtonRaphson(
         )
         xOld = xNew
     }
-    return NewtonRaphsonIterationResult(iterations)
+    return NewtonRaphsonIterationResult(this, iterations)
 
 }

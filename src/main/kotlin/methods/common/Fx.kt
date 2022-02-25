@@ -5,7 +5,9 @@ import com.mpobjects.bdparsii.eval.Scope
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-data class Fx(val expression: String)
+data class Fx(val expression: String) {
+    override fun toString() = expression
+}
 
 /**
  * Calculates the value of an expression that is a function of x, given x

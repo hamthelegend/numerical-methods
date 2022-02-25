@@ -5,17 +5,22 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 abstract class IterationResult {
+    abstract val expression: Fx
     abstract val methodName: String
     abstract val iterations: List<Iteration>
 
-//    abstract fun getFunctionString(xLast: )
+    abstract fun getEquationString(xLast: RoundedDecimal): String
 
     fun writeFile() {
-        println("$methodName: x ≈ ${iterations.last().xNew}")
-        val fileName = "$methodName.csv"
+        val xLast = iterations.last().xNew
+        println("$methodName: x ≈ $xLast for ${getEquationString(xLast)}")
+        val outputDirectoryName = "output"
+        val outputDirectory = File(outputDirectoryName)
+        if (!outputDirectory.exists()) outputDirectory.mkdir()
+        val fileName = "$outputDirectoryName/$methodName.csv"
         val file = File(fileName)
         file.writeText(toString())
-        println("Answer written to $fileName")
+        println("Answer written to $fileName\n")
     }
 
 }

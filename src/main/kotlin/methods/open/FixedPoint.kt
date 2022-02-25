@@ -5,9 +5,14 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 data class FixedPointIterationResult(
+    override val expression: Fx,
     override val iterations: List<FixedPointIteration>,
 ) : IterationResult() {
+
     override val methodName = "Fixed Point"
+
+    override fun getEquationString(xLast: RoundedDecimal) = "x = $expression"
+
     override fun toString(): String {
         val stringBuilder = StringBuilder("i, xOld, xNew, error\n")
         for ((i, iteration) in iterations.withIndex()) {
@@ -51,6 +56,6 @@ fun Fx.runFixedPoint(
         )
         xOld = xNew
     }
-    return FixedPointIterationResult(iterations)
+    return FixedPointIterationResult(this, iterations)
 
 }
