@@ -14,14 +14,14 @@ import java.math.RoundingMode
  *
  * @param initialXL is the left x of your interval
  * @param initialXR is the right x of your interval
- * @param numberOfIterations is the number of times you want to run the algorithm
  *
  * @return is the list of all the false position iterations
  */
 fun Fx.runFalsePosition(
     initialXL: BigDecimal,
     initialXR: BigDecimal,
-    numberOfIterations: Int,
+    minIterations: Int,
+    maxIterations: Int,
     scale: Int = DEFAULT_CALCULATION_SCALE,
     outputScale: Int = DEFAULT_OUTPUT_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
@@ -30,7 +30,8 @@ fun Fx.runFalsePosition(
         methodName = "False Position",
         initialXL = initialXL,
         initialXR = initialXR,
-        numberOfIterations = numberOfIterations,
+        minIterations = minIterations,
+        maxIterations = maxIterations,
         calculationScale = scale,
         outputScale = outputScale,
         roundingMode = roundingMode

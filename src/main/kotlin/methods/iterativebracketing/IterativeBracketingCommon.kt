@@ -20,6 +20,7 @@ data class BracketIterationResult(
     override val expression: Fx,
     override val methodName: String,
     override val iterations: List<BracketIteration>,
+    override val terminationCause: TerminationCause,
 ) : IterationResult() {
 
 
@@ -36,6 +37,7 @@ data class BracketIterationResult(
         for ((i, iteration) in iterations.withIndex()) {
             stringBuilder.append("${i + 1}, $iteration\n")
         }
+        stringBuilder.append(terminationCause.message)
         return stringBuilder.toString()
     }
 
@@ -68,7 +70,6 @@ data class BracketIteration(
  *
  * @param initialXL is the left x of your interval
  * @param initialXR is the right x of your interval
- * @param numberOfIterations is the number of times you want to run the algorithm
  * @param xNFormula is a lambda that accepts 4 parameters (xL, xR, yL, yR) to calculate the new x approximation
  *
  * @return is the list of all the iterations
@@ -78,13 +79,15 @@ fun Fx.runIterativeBracketing(
     methodName: String,
     initialXL: BigDecimal,
     initialXR: BigDecimal,
-    numberOfIterations: Int,
+    minIterations: Int,
+    maxIterations: Int,
     calculationScale: Int = DEFAULT_CALCULATION_SCALE,
     outputScale: Int = DEFAULT_OUTPUT_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
     xNFormula: (xL: BigDecimal, xR: BigDecimal, yL: BigDecimal, yR: BigDecimal) -> BigDecimal,
 ): BracketIterationResult {
 
+    var iterator = 0
     val iterations = mutableListOf<BracketIteration>()
 
     var xL = initialXL
@@ -92,7 +95,15 @@ fun Fx.runIterativeBracketing(
 
     var xOld: BigDecimal? = null
 
-    for (i in 1..numberOfIterations) {
+    var error = getMaxError(outputScale, roundingMode)
+
+    while (true) {
+
+        if (iterator >= minIterations && error.value.isZero) {
+            return BracketIterationResult(this, methodName, iterations, TerminationCause.ZeroErrorReached)
+        } else if(iterator >= maxIterations) {
+            return BracketIterationResult(this, methodName, iterations, TerminationCause.MaxIterationsReached)
+        }
 
         val yL = calculate(xL, calculationScale, roundingMode)
         val yR = calculate(xR, calculationScale, roundingMode)
@@ -102,9 +113,13 @@ fun Fx.runIterativeBracketing(
         val xNew = xNFormula(xL, xR, yL, yR)
         val yNew = calculate(xNew, calculationScale, roundingMode)
 
-        val error: BigDecimal = xOld?.let {
-            calculateError(xOld = it, xNew = xNew, scale = calculationScale, roundingMode = roundingMode)
-        } ?: BigDecimal.ONE
+        error = calculateError(
+            xOld = xOld,
+            xNew = xNew,
+            calculationScale = calculationScale,
+            outputScale = outputScale,
+            roundingMode = roundingMode
+        )
 
         iterations.add(
             BracketIteration(
@@ -114,7 +129,7 @@ fun Fx.runIterativeBracketing(
                 yR = yR.round(outputScale, roundingMode),
                 xNew = xNew.round(outputScale, roundingMode),
                 yNew = yNew.round(outputScale, roundingMode),
-                error = error.toPercentage(outputScale, roundingMode),
+                error = error,
             )
         )
 
@@ -123,9 +138,9 @@ fun Fx.runIterativeBracketing(
         if (BigDecimal.ZERO in yL..yNew) xR = xNew
         else xL = xNew
 
-    }
+        iterator++
 
-    return BracketIterationResult(this, methodName, iterations)
+    }
 
 }
 

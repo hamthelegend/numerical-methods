@@ -7,6 +7,7 @@ import java.math.RoundingMode
 data class SecantIterationResult(
     override val expression: Fx,
     override val iterations: List<SecantIteration>,
+    override val terminationCause: TerminationCause,
 ) : IterationResult() {
 
     override val methodName = "Secant"
@@ -18,6 +19,7 @@ data class SecantIterationResult(
         for ((i, iteration) in iterations.withIndex()) {
             stringBuilder.append("${i + 1}, $iteration\n")
         }
+        stringBuilder.append(terminationCause.message)
         return stringBuilder.toString()
     }
 
@@ -38,6 +40,7 @@ fun Fx.runSecant(
     initialXA: BigDecimal = guessInitialX(),
     initialXB: BigDecimal =
         guessInitialX(if (initialXA >= BigDecimal.ZERO) initialXA + BigDecimal.ONE else initialXA - BigDecimal.ONE),
+    minIterations: Int,
     maxIterations: Int,
     calculationScale: Int = DEFAULT_CALCULATION_SCALE,
     outputScale: Int = DEFAULT_OUTPUT_SCALE,
@@ -51,19 +54,28 @@ fun Fx.runSecant(
     var xA = initialXA
     var xB = initialXB
 
-    var error = 1.toBigDecimal().toPercentage(outputScale, roundingMode)
+    var error = getMaxError(outputScale, roundingMode)
 
-    while(!error.value.isZero && iterator < maxIterations) {
+    while (true) {
+
+        if (iterator >= minIterations && error.value.isZero) {
+            return SecantIterationResult(this, iterations, TerminationCause.ZeroErrorReached)
+        } else if (iterator >= maxIterations) {
+            return SecantIterationResult(this, iterations, TerminationCause.MaxIterationsReached)
+        }
+
         val fxA = calculate(xA, calculationScale, roundingMode)
         val fxB = calculate(xB, calculationScale, roundingMode)
 
         val xNew = xA - fxA * (xA - xB).divide(fxA - fxB, calculationScale, roundingMode)
 
-        error = xOld?.let {
-            calculateError(xOld = it, xNew = xNew, scale = calculationScale, roundingMode = roundingMode).toPercentage(
-                outputScale, roundingMode
-            )
-        } ?: 1.toBigDecimal().toPercentage(outputScale, roundingMode)
+        error = calculateError(
+            xOld = xOld,
+            xNew = xNew,
+            calculationScale = calculationScale,
+            outputScale = outputScale,
+            roundingMode = roundingMode
+        )
 
         iterations.add(
             SecantIteration(
@@ -81,8 +93,7 @@ fun Fx.runSecant(
 
         xOld = xNew
         iterator++
-    }
 
-    return SecantIterationResult(this, iterations)
+    }
 
 }

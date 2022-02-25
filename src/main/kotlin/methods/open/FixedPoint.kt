@@ -7,6 +7,7 @@ import java.math.RoundingMode
 data class FixedPointIterationResult(
     override val expression: Fx,
     override val iterations: List<FixedPointIteration>,
+    override val terminationCause: TerminationCause,
 ) : IterationResult() {
 
     override val methodName = "Fixed Point"
@@ -18,6 +19,7 @@ data class FixedPointIterationResult(
         for ((i, iteration) in iterations.withIndex()) {
             stringBuilder.append("${i + 1}, $iteration\n")
         }
+        stringBuilder.append(terminationCause.message)
         return stringBuilder.toString()
     }
 }
@@ -31,27 +33,50 @@ data class FixedPointIteration(
 }
 
 fun Fx.runFixedPoint(
-    numberOfIterations: Int,
+    minIterations: Int,
+    maxIterations: Int,
     initialX: BigDecimal = guessInitialX(),
     calculationScale: Int = DEFAULT_CALCULATION_SCALE,
     outputScale: Int = DEFAULT_OUTPUT_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
 ): FixedPointIterationResult {
 
+    var iterator = 0
+
     val iterations = mutableListOf<FixedPointIteration>()
     var xOld = initialX
-    repeat(numberOfIterations) {
+    var error = getMaxError(outputScale, roundingMode)
+
+    while(true) {
+
+        if (iterator >= minIterations && error.value.isZero) {
+            return FixedPointIterationResult(this, iterations, TerminationCause.ZeroErrorReached)
+        } else if(iterator >= maxIterations) {
+            return FixedPointIterationResult(this, iterations, TerminationCause.MaxIterationsReached)
+        }
+
         val xNew = calculate(xOld, calculationScale, roundingMode)
-        val error = calculateError(xOld = xOld, xNew = xNew, scale = calculationScale, roundingMode = roundingMode)
+
+        error = calculateError(
+            xOld = xOld,
+            xNew = xNew,
+            calculationScale = calculationScale,
+            outputScale = outputScale,
+            roundingMode = roundingMode
+        )
+
         iterations.add(
             FixedPointIteration(
                 xOld = xOld.round(outputScale, roundingMode),
                 xNew = xNew.round(outputScale, roundingMode),
-                error = error.toPercentage(outputScale, roundingMode),
+                error = error,
             )
         )
+
         xOld = xNew
+
+        iterator++
+
     }
-    return FixedPointIterationResult(this, iterations)
 
 }

@@ -8,14 +8,15 @@ import methods.open.runSecant
 import java.math.BigDecimal
 
 fun main() {
-    val i = 100
+    val minIterations = 5
+    val maxIterations = 100
     Fx("exp(-x) - x").apply {
         val xL = BigDecimal.ONE
         val xR = BigDecimal.ZERO
-        runBisection(xL, xR, i).writeFile()
-        runFalsePosition(xL, xR, i).writeFile()
-        runNewtonRaphson(Fx("-exp(-x) - 1"), i).writeFile()
-        runSecant(maxIterations = 100).writeFile()
+        runBisection(xL, xR, minIterations, maxIterations).writeFile()
+        runFalsePosition(xL, xR, minIterations, maxIterations).writeFile()
+        runNewtonRaphson(Fx("-exp(-x) - 1"), minIterations, maxIterations).writeFile()
+        runSecant(minIterations = minIterations, maxIterations = 100).writeFile()
     }
-    Fx("exp(-x)").runFixedPoint(i).writeFile()
+    Fx("exp(-x)").runFixedPoint(minIterations = minIterations, maxIterations = maxIterations).writeFile()
 }
