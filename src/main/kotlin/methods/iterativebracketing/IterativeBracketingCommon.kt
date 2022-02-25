@@ -81,8 +81,7 @@ fun Fx.runIterativeBracketing(
     initialXR: BigDecimal,
     minIterations: Int,
     maxIterations: Int,
-    calculationScale: Int = DEFAULT_CALCULATION_SCALE,
-    outputScale: Int = DEFAULT_OUTPUT_SCALE,
+    scale: Int = DEFAULT_OUTPUT_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
     xNFormula: (xL: BigDecimal, xR: BigDecimal, yL: BigDecimal, yR: BigDecimal) -> BigDecimal,
 ): BracketIterationResult {
@@ -95,7 +94,7 @@ fun Fx.runIterativeBracketing(
 
     var xOld: BigDecimal? = null
 
-    var error = getMaxError(outputScale, roundingMode)
+    var error = getMaxError(scale, roundingMode)
 
     while (true) {
 
@@ -105,37 +104,36 @@ fun Fx.runIterativeBracketing(
             return BracketIterationResult(this, methodName, iterations, TerminationCause.MaxIterationsReached)
         }
 
-        val yL = calculate(xL, calculationScale, roundingMode)
-        val yR = calculate(xR, calculationScale, roundingMode)
+        val yL = calculate(xL, scale, roundingMode)
+        val yR = calculate(xR, scale, roundingMode)
 
-        if (BigDecimal.ZERO !in yL..yR) throw NoZeroInBracketException(xL, xR, yL, yR)
+        if (BigDecimal.ZERO !in yL..yR && BigDecimal.ZERO !in yR..yL) throw NoZeroInBracketException(xL, xR, yL, yR)
 
         val xNew = xNFormula(xL, xR, yL, yR)
-        val yNew = calculate(xNew, calculationScale, roundingMode)
+        val yNew = calculate(xNew, scale, roundingMode)
 
         error = calculateError(
             xOld = xOld,
             xNew = xNew,
-            calculationScale = calculationScale,
-            outputScale = outputScale,
+            scale = scale,
             roundingMode = roundingMode
         )
 
         iterations.add(
             BracketIteration(
-                xL = xL.round(outputScale, roundingMode),
-                xR = xR.round(outputScale, roundingMode),
-                yL = yL.round(outputScale, roundingMode),
-                yR = yR.round(outputScale, roundingMode),
-                xNew = xNew.round(outputScale, roundingMode),
-                yNew = yNew.round(outputScale, roundingMode),
+                xL = xL.round(scale, roundingMode),
+                xR = xR.round(scale, roundingMode),
+                yL = yL.round(scale, roundingMode),
+                yR = yR.round(scale, roundingMode),
+                xNew = xNew.round(scale, roundingMode),
+                yNew = yNew.round(scale, roundingMode),
                 error = error,
             )
         )
 
         xOld = xNew
 
-        if (BigDecimal.ZERO in yL..yNew) xR = xNew
+        if (BigDecimal.ZERO in yL..yNew || BigDecimal.ZERO in yNew..yL) xR = xNew
         else xL = xNew
 
         iterator++

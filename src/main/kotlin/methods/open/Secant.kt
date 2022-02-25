@@ -42,8 +42,7 @@ fun Fx.runSecant(
         guessInitialX(if (initialXA >= BigDecimal.ZERO) initialXA + BigDecimal.ONE else initialXA - BigDecimal.ONE),
     minIterations: Int,
     maxIterations: Int,
-    calculationScale: Int = DEFAULT_CALCULATION_SCALE,
-    outputScale: Int = DEFAULT_OUTPUT_SCALE,
+    scale: Int = DEFAULT_OUTPUT_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
 ): SecantIterationResult {
 
@@ -54,7 +53,7 @@ fun Fx.runSecant(
     var xA = initialXA
     var xB = initialXB
 
-    var error = getMaxError(outputScale, roundingMode)
+    var error = getMaxError(scale, roundingMode)
 
     while (true) {
 
@@ -64,26 +63,25 @@ fun Fx.runSecant(
             return SecantIterationResult(this, iterations, TerminationCause.MaxIterationsReached)
         }
 
-        val fxA = calculate(xA, calculationScale, roundingMode)
-        val fxB = calculate(xB, calculationScale, roundingMode)
+        val fxA = calculate(xA, scale, roundingMode)
+        val fxB = calculate(xB, scale, roundingMode)
 
-        val xNew = xA - fxA * (xA - xB).divide(fxA - fxB, calculationScale, roundingMode)
+        val xNew = xA - fxA * (xA - xB).divide(fxA - fxB, scale, roundingMode)
 
         error = calculateError(
             xOld = xOld,
             xNew = xNew,
-            calculationScale = calculationScale,
-            outputScale = outputScale,
+            scale = scale,
             roundingMode = roundingMode
         )
 
         iterations.add(
             SecantIteration(
-                xA = xA.round(outputScale, roundingMode),
-                xB = xB.round(outputScale, roundingMode),
-                fxA = fxA.round(outputScale, roundingMode),
-                fxB = fxB.round(outputScale, roundingMode),
-                xNew = xNew.round(outputScale, roundingMode),
+                xA = xA.round(scale, roundingMode),
+                xB = xB.round(scale, roundingMode),
+                fxA = fxA.round(scale, roundingMode),
+                fxB = fxB.round(scale, roundingMode),
+                xNew = xNew.round(scale, roundingMode),
                 error = error,
             )
         )

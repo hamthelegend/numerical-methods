@@ -1,6 +1,5 @@
 package methods.iterativebracketing
 
-import methods.common.DEFAULT_CALCULATION_SCALE
 import methods.common.DEFAULT_OUTPUT_SCALE
 import methods.common.DEFAULT_ROUNDING_MODE
 import methods.common.Fx
@@ -22,8 +21,7 @@ fun Fx.runBisection(
     initialXR: BigDecimal,
     minIterations: Int,
     maxIterations: Int,
-    scale: Int = DEFAULT_CALCULATION_SCALE,
-    outputScale: Int = DEFAULT_OUTPUT_SCALE,
+    scale: Int = DEFAULT_OUTPUT_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
 ) =
     runIterativeBracketing(
@@ -32,8 +30,7 @@ fun Fx.runBisection(
         initialXR = initialXR,
         minIterations = minIterations,
         maxIterations = maxIterations,
-        calculationScale = scale,
-        outputScale = outputScale,
+        scale = scale,
         roundingMode = roundingMode,
     ) { xL, xR, _, _ ->
         (xL + xR).divide(2.toBigDecimal(), scale, roundingMode)

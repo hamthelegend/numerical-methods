@@ -42,10 +42,9 @@ abstract class Iteration {
 fun calculateError(
     xOld: BigDecimal?,
     xNew: BigDecimal,
-    calculationScale: Int,
-    outputScale: Int,
+    scale: Int,
     roundingMode: RoundingMode,
 ) =
     // ((xNew - xOld) / xNew).abs()
-    xOld?.minus(xNew)?.divide(xNew, calculationScale, roundingMode)?.abs()?.toPercentage(outputScale, roundingMode)
-        ?: 1.toBigDecimal().toPercentage(outputScale, roundingMode)
+    xOld?.minus(xNew)?.divide(xNew, scale, roundingMode)?.abs()?.toPercentage(scale, roundingMode)
+        ?: 1.toBigDecimal().toPercentage(scale, roundingMode)

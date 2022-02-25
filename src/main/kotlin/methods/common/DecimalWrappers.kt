@@ -15,9 +15,8 @@ class RoundedDecimal(value: BigDecimal, val scale: Int, val roundingMode: Roundi
 
 fun BigDecimal.round(scale: Int, roundingMode: RoundingMode) = RoundedDecimal(this, scale, roundingMode)
 
-class Percentage(@Suppress("unused")val decimalValue: BigDecimal, scale: Int, roundingMode: RoundingMode) {
-    @Suppress("private")
-    val value = (decimalValue * 100.toBigDecimal()).round(scale - 2, roundingMode)
+class Percentage (decimalValue: BigDecimal, scale: Int, roundingMode: RoundingMode) {
+    val value = (decimalValue * 100.toBigDecimal()).round(scale, roundingMode)
 
     operator fun getValue(thisRef: RoundedDecimal, property: KProperty<*>): BigDecimal = value.value
     override fun toString() = "$value%"

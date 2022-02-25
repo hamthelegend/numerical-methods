@@ -11,8 +11,8 @@ fun main() {
     val minIterations = 5
     val maxIterations = 100
     Fx("exp(-x) - x").apply {
-        val xL = BigDecimal.ONE
-        val xR = BigDecimal.ZERO
+        val xL = BigDecimal.ZERO
+        val xR = BigDecimal.ONE
         runBisection(xL, xR, minIterations, maxIterations).writeFile()
         runFalsePosition(xL, xR, minIterations, maxIterations).writeFile()
         runNewtonRaphson(Fx("-exp(-x) - 1"), minIterations, maxIterations).writeFile()

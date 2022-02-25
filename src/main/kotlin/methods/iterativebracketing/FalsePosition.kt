@@ -32,8 +32,7 @@ fun Fx.runFalsePosition(
         initialXR = initialXR,
         minIterations = minIterations,
         maxIterations = maxIterations,
-        calculationScale = scale,
-        outputScale = outputScale,
+        scale = outputScale,
         roundingMode = roundingMode
     ) { xL, xR, yL, yR ->
         (xL + (xR - xL) * (yL.divide(yL - yR, scale, roundingMode))).setScale(scale, roundingMode)

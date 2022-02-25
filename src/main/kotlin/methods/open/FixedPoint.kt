@@ -36,8 +36,7 @@ fun Fx.runFixedPoint(
     minIterations: Int,
     maxIterations: Int,
     initialX: BigDecimal = guessInitialX(),
-    calculationScale: Int = DEFAULT_CALCULATION_SCALE,
-    outputScale: Int = DEFAULT_OUTPUT_SCALE,
+    scale: Int = DEFAULT_OUTPUT_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
 ): FixedPointIterationResult {
 
@@ -45,7 +44,7 @@ fun Fx.runFixedPoint(
 
     val iterations = mutableListOf<FixedPointIteration>()
     var xOld = initialX
-    var error = getMaxError(outputScale, roundingMode)
+    var error = getMaxError(scale, roundingMode)
 
     while(true) {
 
@@ -55,20 +54,19 @@ fun Fx.runFixedPoint(
             return FixedPointIterationResult(this, iterations, TerminationCause.MaxIterationsReached)
         }
 
-        val xNew = calculate(xOld, calculationScale, roundingMode)
+        val xNew = calculate(xOld, scale, roundingMode)
 
         error = calculateError(
             xOld = xOld,
             xNew = xNew,
-            calculationScale = calculationScale,
-            outputScale = outputScale,
+            scale = scale,
             roundingMode = roundingMode
         )
 
         iterations.add(
             FixedPointIteration(
-                xOld = xOld.round(outputScale, roundingMode),
-                xNew = xNew.round(outputScale, roundingMode),
+                xOld = xOld.round(scale, roundingMode),
+                xNew = xNew.round(scale, roundingMode),
                 error = error,
             )
         )
