@@ -8,11 +8,11 @@ import methods.open.runNewtonRaphson
 import methods.open.runSecant
 
 fun main() {
-    val f = Fx("exp(-x) - x")
+    val f = Fx("x - cos(x)")
     val interval = BracketInterval(0, 1)
-    runBisection(f, interval).writeFile()
-    runFalsePosition(f, interval).writeFile()
-    runNewtonRaphson(f, Fx("-exp(-x) - 1")).writeFile()
-    runSecant(f).writeFile()
-    runFixedPoint(g = Fx("exp(-x)")).writeFile()
+    runBisection(f = f, initialInterval = interval).writeFile()
+    runFalsePosition(f = f, initialInterval = interval).writeFile()
+    runFixedPoint(g = Fx("cos(x)")).writeFile()
+    runNewtonRaphson(f = f, fPrime = Fx("1 + sin(x)")).writeFile()
+    runSecant(f = f).writeFile()
 }
