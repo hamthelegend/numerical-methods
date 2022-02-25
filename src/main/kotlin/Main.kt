@@ -4,6 +4,7 @@ import methods.iterativebracketing.runBisection
 import methods.iterativebracketing.runFalsePosition
 import methods.open.runFixedPoint
 import methods.open.runNewtonRaphson
+import methods.open.runSecant
 import java.math.BigDecimal
 
 fun main() {
@@ -13,7 +14,8 @@ fun main() {
         val xR = BigDecimal.ZERO
         runBisection(xL, xR, i).writeFile()
         runFalsePosition(xL, xR, i).writeFile()
+        runNewtonRaphson(Fx("-exp(-x) - 1"), i).writeFile()
+        runSecant(100).writeFile()
     }
     Fx("exp(-x)").runFixedPoint(i).writeFile()
-    Fx("exp(-x) - x").runNewtonRaphson(Fx("-exp(-x) - 1"), i).writeFile()
 }
