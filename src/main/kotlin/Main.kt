@@ -20,15 +20,19 @@ fun main() {
 
     // the minimum iterations you want, even if the absolute relative approximate error is already zero
     val minIterations = Default.MIN_ITERATION
+    // Example: val minIterations = 10
 
     // the maximum iterations you want, even if the absolute relative approximate error is not yet zero
     val maxIterations = Default.MAX_ITERATION
+    // Example: val maxIterations = 100
 
     // the number of decimal places you want after the decimal point
     val scale = Default.SCALE
+    // Example: val scale = 4
 
     // the way you want to round the number 5. hover over [RoundingMode] to see a table of the different types
     val roundingMode = RoundingMode.HALF_EVEN
+    // Example: val roundingMode = RoundingMode.HALF_UP /* to always round up 5 */
     /* END OF EDITABLE VALUES */
 
     // Edit the values below this line at your own discretion

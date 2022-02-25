@@ -4,7 +4,7 @@ import java.math.RoundingMode
 
 object Default {
     const val MIN_ITERATION = 0
-    const val MAX_ITERATION = 100
+    const val MAX_ITERATION = 50
     const val SCALE = 6
     val ROUNDING_MODE = RoundingMode.HALF_EVEN
 }
