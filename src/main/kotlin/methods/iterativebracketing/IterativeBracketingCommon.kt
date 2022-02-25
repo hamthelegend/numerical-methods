@@ -39,13 +39,13 @@ data class BracketIterationResult(override val methodName: String, override val 
  * A data class that stores the result of a single iteration of an iterative bracketing numerical method
  */
 data class BracketIteration(
-    val xL: BigDecimal,
-    val xR: BigDecimal,
-    val yL: BigDecimal,
-    val yR: BigDecimal,
-    override val xNew: BigDecimal,
-    val yNew: BigDecimal,
-    override val error: BigDecimal?,
+    val xL: RoundedDecimal,
+    val xR: RoundedDecimal,
+    val yL: RoundedDecimal,
+    val yR: RoundedDecimal,
+    override val xNew: RoundedDecimal,
+    val yNew: RoundedDecimal,
+    override val error: Percentage,
     override val scale: Int = DEFAULT_CALCULATION_SCALE,
     override val roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
 ) : Iteration() {
@@ -98,19 +98,19 @@ fun Fx.runIterativeBracketing(
         val xNew = xNFormula(xL, xR, yL, yR)
         val yNew = calculate(xNew, calculationScale, roundingMode)
 
-        val error = xOld?.let {
+        val error: BigDecimal = xOld?.let {
             calculateError(xOld = it, xNew = xNew, scale = calculationScale, roundingMode = roundingMode)
-        }
+        } ?: BigDecimal.ONE
 
         iterations.add(
             BracketIteration(
-                xL = xL.setScale(outputScale, roundingMode),
-                xR = xR.setScale(outputScale, roundingMode),
-                yL = yL.setScale(outputScale, roundingMode),
-                yR = yR.setScale(outputScale, roundingMode),
-                xNew = xNew.setScale(outputScale, roundingMode),
-                yNew = yNew.setScale(outputScale, roundingMode),
-                error = error?.setScale(outputScale, roundingMode),
+                xL = xL.round(outputScale, roundingMode),
+                xR = xR.round(outputScale, roundingMode),
+                yL = yL.round(outputScale, roundingMode),
+                yR = yR.round(outputScale, roundingMode),
+                xNew = xNew.round(outputScale, roundingMode),
+                yNew = yNew.round(outputScale, roundingMode),
+                error = error.toPercentage(outputScale, roundingMode),
                 scale = outputScale,
                 roundingMode = roundingMode,
             )
@@ -130,7 +130,9 @@ fun Fx.runIterativeBracketing(
 /**
  * Is a function that tries to find a good bracket interval
  * WARNING: This function is not guaranteed to work
+ * TODO: Make this more reliable
  */
+@Suppress("unused")
 fun Fx.findInterval(
     scale: Int = DEFAULT_CALCULATION_SCALE,
     roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,

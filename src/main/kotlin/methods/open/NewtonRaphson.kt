@@ -18,11 +18,11 @@ data class NewtonRaphsonIterationResult(
 }
 
 data class NewtonRaphsonIteration(
-    val xOld: BigDecimal,
-    val fXOld: BigDecimal,
-    val fPrimeXOld: BigDecimal,
-    override val xNew: BigDecimal,
-    override val error: BigDecimal,
+    val xOld: RoundedDecimal,
+    val fXOld: RoundedDecimal,
+    val fPrimeXOld: RoundedDecimal,
+    override val xNew: RoundedDecimal,
+    override val error: Percentage,
     override val scale: Int,
     override val roundingMode: RoundingMode,
 ) : Iteration() {
@@ -47,11 +47,11 @@ fun Fx.runNewtonRaphson(
         val error = calculateError(xOld = xOld, xNew = xNew, scale = calculationScale, roundingMode = roundingMode)
         iterations.add(
             NewtonRaphsonIteration(
-                xOld = xOld.setScale(outputScale, roundingMode),
-                fXOld = fXOld.setScale(outputScale, roundingMode),
-                fPrimeXOld = fPrimeXOld.setScale(outputScale, roundingMode),
-                xNew = xNew.setScale(outputScale, roundingMode),
-                error = error.setScale(outputScale, roundingMode),
+                xOld = xOld.round(outputScale, roundingMode),
+                fXOld = fXOld.round(outputScale, roundingMode),
+                fPrimeXOld = fPrimeXOld.round(outputScale, roundingMode),
+                xNew = xNew.round(outputScale, roundingMode),
+                error = error.toPercentage(outputScale, roundingMode),
                 scale = outputScale,
                 roundingMode = roundingMode
             )

@@ -8,6 +8,8 @@ abstract class IterationResult {
     abstract val methodName: String
     abstract val iterations: List<Iteration>
 
+//    abstract fun getFunctionString(xLast: )
+
     fun writeFile() {
         println("$methodName: x ≈ ${iterations.last().xNew}")
         val fileName = "$methodName.csv"
@@ -19,10 +21,10 @@ abstract class IterationResult {
 }
 
 abstract class Iteration {
-    abstract val xNew: BigDecimal
+    abstract val xNew: RoundedDecimal
     abstract val scale: Int
     abstract val roundingMode: RoundingMode
-    abstract val error: BigDecimal?
+    abstract val error: Percentage
 }
 
 fun calculateError(xOld: BigDecimal, xNew: BigDecimal, scale: Int, roundingMode: RoundingMode) =
