@@ -38,9 +38,8 @@ data class SecantIteration(
 
 fun runSecant(
     f: Fx,
-    initialXA: BigDecimal = f.getInitialX(),
-    initialXB: BigDecimal =
-        f.getInitialX(if (initialXA >= BigDecimal.ZERO) initialXA + BigDecimal.ONE else initialXA - BigDecimal.ONE),
+    initialXA: BigDecimal,
+    initialXB: BigDecimal,
     minIterations: Int = Default.MIN_ITERATION,
     maxIterations: Int = Default.MAX_ITERATION,
     scale: Int = Default.SCALE,

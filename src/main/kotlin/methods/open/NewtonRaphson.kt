@@ -37,9 +37,9 @@ data class NewtonRaphsonIteration(
 fun runNewtonRaphson(
     f: Fx,
     fPrime: Fx,
+    initialX: BigDecimal,
     minIterations: Int = Default.MIN_ITERATION,
     maxIterations: Int = Default.MAX_ITERATION,
-    initialX: BigDecimal = f.getInitialX(),
     scale: Int = Default.SCALE,
     roundingMode: RoundingMode = Default.ROUNDING_MODE,
 ): NewtonRaphsonIterationResult {
