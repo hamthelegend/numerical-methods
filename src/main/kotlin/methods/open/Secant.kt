@@ -42,8 +42,8 @@ fun Fx.runSecant(
         guessInitialX(if (initialXA >= BigDecimal.ZERO) initialXA + BigDecimal.ONE else initialXA - BigDecimal.ONE),
     minIterations: Int,
     maxIterations: Int,
-    scale: Int = DEFAULT_OUTPUT_SCALE,
-    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
+    scale: Int = Default.SCALE,
+    roundingMode: RoundingMode = Default.ROUNDING_MODE,
 ): SecantIterationResult {
 
     var iterator = 0

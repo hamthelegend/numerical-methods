@@ -36,8 +36,8 @@ fun Fx.runFixedPoint(
     minIterations: Int,
     maxIterations: Int,
     initialX: BigDecimal = guessInitialX(),
-    scale: Int = DEFAULT_OUTPUT_SCALE,
-    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
+    scale: Int = Default.SCALE,
+    roundingMode: RoundingMode = Default.ROUNDING_MODE,
 ): FixedPointIterationResult {
 
     var iterator = 0

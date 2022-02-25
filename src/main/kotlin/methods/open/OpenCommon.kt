@@ -1,7 +1,6 @@
 package methods.open
 
-import methods.common.DEFAULT_CALCULATION_SCALE
-import methods.common.DEFAULT_ROUNDING_MODE
+import methods.common.Default
 import methods.common.Fx
 import methods.common.calculate
 import java.math.BigDecimal
@@ -9,8 +8,8 @@ import java.math.RoundingMode
 
 fun Fx.guessInitialX(
     guessX: BigDecimal = BigDecimal.ZERO,
-    calculationScale: Int = DEFAULT_CALCULATION_SCALE,
-    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
+    calculationScale: Int = Default.SCALE,
+    roundingMode: RoundingMode = Default.ROUNDING_MODE,
 ): BigDecimal = try {
     calculate(guessX, calculationScale, roundingMode)
     guessX

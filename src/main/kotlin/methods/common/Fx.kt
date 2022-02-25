@@ -22,7 +22,7 @@ data class Fx(val expression: String) {
  */
 fun Fx.calculate(
     x: BigDecimal,
-    scale: Int = DEFAULT_CALCULATION_SCALE,
+    scale: Int = Default.SCALE,
     roundingMode: RoundingMode,
 ): BigDecimal {
     val scope = Scope()

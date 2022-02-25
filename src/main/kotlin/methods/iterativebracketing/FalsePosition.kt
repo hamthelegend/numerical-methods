@@ -1,8 +1,6 @@
 package methods.iterativebracketing
 
-import methods.common.DEFAULT_CALCULATION_SCALE
-import methods.common.DEFAULT_OUTPUT_SCALE
-import methods.common.DEFAULT_ROUNDING_MODE
+import methods.common.Default
 import methods.common.Fx
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -22,9 +20,8 @@ fun Fx.runFalsePosition(
     initialXR: BigDecimal,
     minIterations: Int,
     maxIterations: Int,
-    scale: Int = DEFAULT_CALCULATION_SCALE,
-    outputScale: Int = DEFAULT_OUTPUT_SCALE,
-    roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
+    scale: Int = Default.SCALE,
+    roundingMode: RoundingMode = Default.ROUNDING_MODE,
 ) =
     runIterativeBracketing(
         methodName = "False Position",
@@ -32,7 +29,7 @@ fun Fx.runFalsePosition(
         initialXR = initialXR,
         minIterations = minIterations,
         maxIterations = maxIterations,
-        scale = outputScale,
+        scale = scale,
         roundingMode = roundingMode
     ) { xL, xR, yL, yR ->
         (xL + (xR - xL) * (yL.divide(yL - yR, scale, roundingMode))).setScale(scale, roundingMode)
