@@ -36,12 +36,13 @@ data class SecantIteration(
     override fun toString() = "$xA, $xB, $fxA, $fxB, $xNew, $error"
 }
 
-fun Fx.runSecant(
-    initialXA: BigDecimal = guessInitialX(),
+fun runSecant(
+    f: Fx,
+    initialXA: BigDecimal = f.getInitialX(),
     initialXB: BigDecimal =
-        guessInitialX(if (initialXA >= BigDecimal.ZERO) initialXA + BigDecimal.ONE else initialXA - BigDecimal.ONE),
-    minIterations: Int,
-    maxIterations: Int,
+        f.getInitialX(if (initialXA >= BigDecimal.ZERO) initialXA + BigDecimal.ONE else initialXA - BigDecimal.ONE),
+    minIterations: Int = Default.MIN_ITERATION,
+    maxIterations: Int = Default.MAX_ITERATION,
     scale: Int = Default.SCALE,
     roundingMode: RoundingMode = Default.ROUNDING_MODE,
 ): SecantIterationResult {
@@ -58,13 +59,13 @@ fun Fx.runSecant(
     while (true) {
 
         if (iterator >= minIterations && error.value.isZero) {
-            return SecantIterationResult(this, iterations, TerminationCause.ZeroErrorReached)
+            return SecantIterationResult(f, iterations, TerminationCause.ZeroErrorReached)
         } else if (iterator >= maxIterations) {
-            return SecantIterationResult(this, iterations, TerminationCause.MaxIterationsReached)
+            return SecantIterationResult(f, iterations, TerminationCause.MaxIterationsReached)
         }
 
-        val fxA = calculate(xA, scale, roundingMode)
-        val fxB = calculate(xB, scale, roundingMode)
+        val fxA = f.calculate(xA, scale, roundingMode)
+        val fxB = f.calculate(xB, scale, roundingMode)
 
         val xNew = xA - fxA * (xA - xB).divide(fxA - fxB, scale, roundingMode)
 

@@ -6,7 +6,7 @@ import methods.common.calculate
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-fun Fx.guessInitialX(
+fun Fx.getInitialX(
     guessX: BigDecimal = BigDecimal.ZERO,
     calculationScale: Int = Default.SCALE,
     roundingMode: RoundingMode = Default.ROUNDING_MODE,
@@ -15,5 +15,5 @@ fun Fx.guessInitialX(
     guessX
 } catch (e: ArithmeticException) {
     val newGuessX = if (guessX > BigDecimal.ZERO) -guessX else guessX + BigDecimal.ONE
-    guessInitialX(newGuessX, calculationScale, roundingMode)
+    getInitialX(newGuessX, calculationScale, roundingMode)
 }

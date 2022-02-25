@@ -32,10 +32,11 @@ data class FixedPointIteration(
     override fun toString() = "$xOld, $xNew, $error"
 }
 
-fun Fx.runFixedPoint(
-    minIterations: Int,
-    maxIterations: Int,
-    initialX: BigDecimal = guessInitialX(),
+fun runFixedPoint(
+    g: Fx,
+    minIterations: Int = Default.MIN_ITERATION,
+    maxIterations: Int = Default.MAX_ITERATION,
+    initialX: BigDecimal = g.getInitialX(),
     scale: Int = Default.SCALE,
     roundingMode: RoundingMode = Default.ROUNDING_MODE,
 ): FixedPointIterationResult {
@@ -49,12 +50,12 @@ fun Fx.runFixedPoint(
     while(true) {
 
         if (iterator >= minIterations && error.value.isZero) {
-            return FixedPointIterationResult(this, iterations, TerminationCause.ZeroErrorReached)
+            return FixedPointIterationResult(g, iterations, TerminationCause.ZeroErrorReached)
         } else if(iterator >= maxIterations) {
-            return FixedPointIterationResult(this, iterations, TerminationCause.MaxIterationsReached)
+            return FixedPointIterationResult(g, iterations, TerminationCause.MaxIterationsReached)
         }
 
-        val xNew = calculate(xOld, scale, roundingMode)
+        val xNew = g.calculate(xOld, scale, roundingMode)
 
         error = calculateError(
             xOld = xOld,

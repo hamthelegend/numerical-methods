@@ -15,7 +15,7 @@ data class NewtonRaphsonIterationResult(
     override fun getEquationString(xLast: RoundedDecimal) = "$expression = 0"
 
     override fun toString(): String {
-        val stringBuilder = StringBuilder("i, xOld, fXOld, fPrimeXOld, xNew, error\n")
+        val stringBuilder = StringBuilder("i, xOld, fxOld, fPrimeXOld, xNew, error\n")
         for ((i, iteration) in iterations.withIndex()) {
             stringBuilder.append("${i + 1}, $iteration\n")
         }
@@ -26,19 +26,20 @@ data class NewtonRaphsonIterationResult(
 
 data class NewtonRaphsonIteration(
     val xOld: RoundedDecimal,
-    val fXOld: RoundedDecimal,
+    val fxOld: RoundedDecimal,
     val fPrimeXOld: RoundedDecimal,
     override val xNew: RoundedDecimal,
     override val error: Percentage,
 ) : Iteration() {
-    override fun toString() = "$xOld, $fXOld, $fPrimeXOld, $xNew, $error"
+    override fun toString() = "$xOld, $fxOld, $fPrimeXOld, $xNew, $error"
 }
 
-fun Fx.runNewtonRaphson(
-    derivative: Fx,
-    minIterations: Int,
-    maxIterations: Int,
-    initialX: BigDecimal = guessInitialX(),
+fun runNewtonRaphson(
+    f: Fx,
+    fPrime: Fx,
+    minIterations: Int = Default.MIN_ITERATION,
+    maxIterations: Int = Default.MAX_ITERATION,
+    initialX: BigDecimal = f.getInitialX(),
     scale: Int = Default.SCALE,
     roundingMode: RoundingMode = Default.ROUNDING_MODE,
 ): NewtonRaphsonIterationResult {
@@ -53,15 +54,15 @@ fun Fx.runNewtonRaphson(
     while (true) {
 
         if (iterator >= minIterations && error.value.isZero) {
-            return NewtonRaphsonIterationResult(this, iterations, TerminationCause.ZeroErrorReached)
+            return NewtonRaphsonIterationResult(f, iterations, TerminationCause.ZeroErrorReached)
         } else if(iterator >= maxIterations) {
-            return NewtonRaphsonIterationResult(this, iterations, TerminationCause.MaxIterationsReached)
+            return NewtonRaphsonIterationResult(f, iterations, TerminationCause.MaxIterationsReached)
         }
 
-        val fXOld = calculate(xOld, scale, roundingMode)
-        val fPrimeXOld = derivative.calculate(xOld, scale, roundingMode)
+        val fxOld = f.calculate(xOld, scale, roundingMode)
+        val fPrimeXOld = fPrime.calculate(xOld, scale, roundingMode)
 
-        val xNew = xOld - fXOld / fPrimeXOld
+        val xNew = xOld - fxOld / fPrimeXOld
         error = calculateError(
             xOld = xOld,
             xNew = xNew,
@@ -72,7 +73,7 @@ fun Fx.runNewtonRaphson(
         iterations.add(
             NewtonRaphsonIteration(
                 xOld = xOld.round(scale, roundingMode),
-                fXOld = fXOld.round(scale, roundingMode),
+                fxOld = fxOld.round(scale, roundingMode),
                 fPrimeXOld = fPrimeXOld.round(scale, roundingMode),
                 xNew = xNew.round(scale, roundingMode),
                 error = error,

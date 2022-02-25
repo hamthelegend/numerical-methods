@@ -1,22 +1,18 @@
 
 import methods.common.Fx
+import methods.iterativebracketing.BracketInterval
 import methods.iterativebracketing.runBisection
 import methods.iterativebracketing.runFalsePosition
 import methods.open.runFixedPoint
 import methods.open.runNewtonRaphson
 import methods.open.runSecant
-import java.math.BigDecimal
 
 fun main() {
-    val minIterations = 5
-    val maxIterations = 100
-    Fx("exp(-x) - x").apply {
-        val xL = BigDecimal.ZERO
-        val xR = BigDecimal.ONE
-        runBisection(xL, xR, minIterations, maxIterations).writeFile()
-        runFalsePosition(xL, xR, minIterations, maxIterations).writeFile()
-        runNewtonRaphson(Fx("-exp(-x) - 1"), minIterations, maxIterations).writeFile()
-        runSecant(minIterations = minIterations, maxIterations = 100).writeFile()
-    }
-    Fx("exp(-x)").runFixedPoint(minIterations = minIterations, maxIterations = maxIterations).writeFile()
+    val f = Fx("exp(-x) - x")
+    val interval = BracketInterval(0, 1)
+    runBisection(f, interval).writeFile()
+    runFalsePosition(f, interval).writeFile()
+    runNewtonRaphson(f, Fx("-exp(-x) - 1")).writeFile()
+    runSecant(f).writeFile()
+    runFixedPoint(g = Fx("exp(-x)")).writeFile()
 }
