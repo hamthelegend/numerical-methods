@@ -19,6 +19,7 @@ abstract class IterationResult {
         if (!outputDirectory.exists()) outputDirectory.mkdir()
         val fileName = "$outputDirectoryName/$methodName.csv"
         val file = File(fileName)
+        file.delete()
         file.writeText(toString())
         println("Answer written to $fileName\n")
     }

@@ -4,10 +4,12 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.reflect.KProperty
 
-class RoundedDecimal(value: BigDecimal, scale: Int, roundingMode: RoundingMode) {
+class RoundedDecimal(value: BigDecimal, val scale: Int, val roundingMode: RoundingMode) {
     val value = value.setScale(scale, roundingMode)
+    val isZero: Boolean
+        get() = toString() == BigDecimal.ZERO.round(scale, roundingMode).toString()
 
-    operator fun getValue(thisRef: RoundedDecimal, property: KProperty<*>) = value
+    operator fun getValue(thisRef: RoundedDecimal, property: KProperty<*>): BigDecimal = value
     override fun toString() = value.toString()
 }
 

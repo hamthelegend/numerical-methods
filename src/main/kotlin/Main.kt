@@ -15,7 +15,7 @@ fun main() {
         runBisection(xL, xR, i).writeFile()
         runFalsePosition(xL, xR, i).writeFile()
         runNewtonRaphson(Fx("-exp(-x) - 1"), i).writeFile()
-        runSecant(100).writeFile()
+        runSecant(maxIterations = 100).writeFile()
     }
     Fx("exp(-x)").runFixedPoint(i).writeFile()
 }
