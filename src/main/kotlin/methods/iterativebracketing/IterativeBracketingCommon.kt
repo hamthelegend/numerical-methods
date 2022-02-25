@@ -52,8 +52,6 @@ data class BracketIteration(
     override val xNew: RoundedDecimal,
     val yNew: RoundedDecimal,
     override val error: Percentage,
-    override val scale: Int = DEFAULT_CALCULATION_SCALE,
-    override val roundingMode: RoundingMode = DEFAULT_ROUNDING_MODE,
 ) : Iteration() {
 
     /**
@@ -117,8 +115,6 @@ fun Fx.runIterativeBracketing(
                 xNew = xNew.round(outputScale, roundingMode),
                 yNew = yNew.round(outputScale, roundingMode),
                 error = error.toPercentage(outputScale, roundingMode),
-                scale = outputScale,
-                roundingMode = roundingMode,
             )
         )
 

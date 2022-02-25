@@ -26,8 +26,6 @@ data class FixedPointIteration(
     val xOld: RoundedDecimal,
     override val xNew: RoundedDecimal,
     override val error: Percentage,
-    override val scale: Int,
-    override val roundingMode: RoundingMode,
 ) : Iteration() {
     override fun toString() = "$xOld, $xNew, $error"
 }
@@ -50,8 +48,6 @@ fun Fx.runFixedPoint(
                 xOld = xOld.round(outputScale, roundingMode),
                 xNew = xNew.round(outputScale, roundingMode),
                 error = error.toPercentage(outputScale, roundingMode),
-                scale = outputScale,
-                roundingMode = roundingMode,
             )
         )
         xOld = xNew

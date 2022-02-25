@@ -27,8 +27,6 @@ abstract class IterationResult {
 
 abstract class Iteration {
     abstract val xNew: RoundedDecimal
-    abstract val scale: Int
-    abstract val roundingMode: RoundingMode
     abstract val error: Percentage
 }
 

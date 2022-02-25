@@ -28,8 +28,6 @@ data class NewtonRaphsonIteration(
     val fPrimeXOld: RoundedDecimal,
     override val xNew: RoundedDecimal,
     override val error: Percentage,
-    override val scale: Int,
-    override val roundingMode: RoundingMode,
 ) : Iteration() {
     override fun toString() = "$xOld, $fXOld, $fPrimeXOld, $xNew, $error"
 }
@@ -57,8 +55,6 @@ fun Fx.runNewtonRaphson(
                 fPrimeXOld = fPrimeXOld.round(outputScale, roundingMode),
                 xNew = xNew.round(outputScale, roundingMode),
                 error = error.toPercentage(outputScale, roundingMode),
-                scale = outputScale,
-                roundingMode = roundingMode
             )
         )
         xOld = xNew

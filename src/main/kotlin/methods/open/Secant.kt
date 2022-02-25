@@ -14,7 +14,7 @@ data class SecantIterationResult(
     override fun getEquationString(xLast: RoundedDecimal) = "$expression = 0"
 
     override fun toString(): String {
-        val stringBuilder = StringBuilder("i, xA, xB, fxA, fxB, xNew\n")
+        val stringBuilder = StringBuilder("i, xA, xB, fxA, fxB, xNew, error\n")
         for ((i, iteration) in iterations.withIndex()) {
             stringBuilder.append("${i + 1}, $iteration\n")
         }
@@ -30,8 +30,6 @@ data class SecantIteration(
     val fxB: RoundedDecimal,
     override val xNew: RoundedDecimal,
     override val error: Percentage,
-    override val scale: Int,
-    override val roundingMode: RoundingMode,
 ) : Iteration() {
     override fun toString() = "$xA, $xB, $fxA, $fxB, $xNew, $error"
 }
@@ -72,8 +70,6 @@ fun Fx.runSecant(
                 fxB = fxB.round(outputScale, roundingMode),
                 xNew = xNew.round(outputScale, roundingMode),
                 error = error.toPercentage(outputScale, roundingMode),
-                scale = outputScale,
-                roundingMode = roundingMode,
             )
         )
 
