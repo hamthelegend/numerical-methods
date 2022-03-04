@@ -12,26 +12,35 @@ data class NewtonRaphsonIterationResult(
 
     override val methodName = "Newton Raphson"
 
+    override val columnNamesCsv = Csv(
+        "i",
+        "xOld",
+        "yOld",
+        "yPrimeOld",
+        "xNew",
+        "error",
+    )
+
     override fun getEquationString(xLast: RoundedDecimal) = "$expression = 0"
 
-    override fun toString(): String {
-        val stringBuilder = StringBuilder("i, xOld, fxOld, fPrimeXOld, xNew, error\n")
-        for ((i, iteration) in iterations.withIndex()) {
-            stringBuilder.append("${i + 1}, $iteration\n")
-        }
-        stringBuilder.append(terminationCause.message)
-        return stringBuilder.toString()
-    }
 }
 
 data class NewtonRaphsonIteration(
     val xOld: RoundedDecimal,
-    val fxOld: RoundedDecimal,
-    val fPrimeXOld: RoundedDecimal,
+    val yOld: RoundedDecimal,
+    val yPrimeOld: RoundedDecimal,
     override val xNew: RoundedDecimal,
     override val error: Percentage,
 ) : Iteration() {
-    override fun toString() = "$xOld, $fxOld, $fPrimeXOld, $xNew, $error"
+
+    override val valuesCsv = Csv(
+        xOld,
+        yOld,
+        yPrimeOld,
+        xNew,
+        error,
+    )
+
 }
 
 fun runNewtonRaphson(
@@ -73,8 +82,8 @@ fun runNewtonRaphson(
         iterations.add(
             NewtonRaphsonIteration(
                 xOld = xOld.round(scale, roundingMode),
-                fxOld = fxOld.round(scale, roundingMode),
-                fPrimeXOld = fPrimeXOld.round(scale, roundingMode),
+                yOld = fxOld.round(scale, roundingMode),
+                yPrimeOld = fPrimeXOld.round(scale, roundingMode),
                 xNew = xNew.round(scale, roundingMode),
                 error = error,
             )

@@ -18,17 +18,18 @@ data class BracketIterationResult(
     override val terminationCause: TerminationCause,
 ) : IterationResult() {
 
+    override val columnNamesCsv = Csv(
+        "i",
+        "xL",
+        "xR",
+        "yL",
+        "yR",
+        "xNew",
+        "yNew",
+        "error",
+    )
 
     override fun getEquationString(xLast: RoundedDecimal) = "$expression = 0"
-
-    override fun toString(): String {
-        val stringBuilder = StringBuilder("i, xL, xR, yL, yR, xNew, yNew, error\n")
-        for ((i, iteration) in iterations.withIndex()) {
-            stringBuilder.append("${i + 1}, $iteration\n")
-        }
-        stringBuilder.append(terminationCause.message)
-        return stringBuilder.toString()
-    }
 
 }
 
@@ -42,11 +43,16 @@ data class BracketIteration(
     override val error: Percentage,
 ) : Iteration() {
 
-    /**
-     * Writes the iteration into a single-line CSV string
-     * It follows the format "xL, xR, yL, yR, xNew, yNew, error"
-     */
-    override fun toString() = "$xL, $xR, $yL, $yR, $xNew, $yNew, $error"
+    override val valuesCsv = Csv(
+        xL,
+        xR,
+        yL,
+        yR,
+        xNew,
+        yNew,
+        error,
+    )
+
 }
 
 fun runIterativeBracketing(

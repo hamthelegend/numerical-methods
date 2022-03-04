@@ -12,28 +12,37 @@ data class SecantIterationResult(
 
     override val methodName = "Secant"
 
+    override val columnNamesCsv = Csv(
+        "i",
+        "xA",
+        "xB",
+        "yA",
+        "yB",
+        "xNew",
+        "error",
+    )
+
     override fun getEquationString(xLast: RoundedDecimal) = "$expression = 0"
 
-    override fun toString(): String {
-        val stringBuilder = StringBuilder("i, xA, xB, fxA, fxB, xNew, error\n")
-        for ((i, iteration) in iterations.withIndex()) {
-            stringBuilder.append("${i + 1}, $iteration\n")
-        }
-        stringBuilder.append(terminationCause.message)
-        return stringBuilder.toString()
-    }
 
 }
 
 data class SecantIteration(
     val xA: RoundedDecimal,
     val xB: RoundedDecimal,
-    val fxA: RoundedDecimal,
-    val fxB: RoundedDecimal,
+    val yA: RoundedDecimal,
+    val yB: RoundedDecimal,
     override val xNew: RoundedDecimal,
     override val error: Percentage,
 ) : Iteration() {
-    override fun toString() = "$xA, $xB, $fxA, $fxB, $xNew, $error"
+    override val valuesCsv = Csv(
+        xA,
+        xB,
+        yA,
+        yB,
+        xNew,
+        error,
+    )
 }
 
 fun runSecant(
@@ -79,8 +88,8 @@ fun runSecant(
             SecantIteration(
                 xA = xA.round(scale, roundingMode),
                 xB = xB.round(scale, roundingMode),
-                fxA = fxA.round(scale, roundingMode),
-                fxB = fxB.round(scale, roundingMode),
+                yA = fxA.round(scale, roundingMode),
+                yB = fxB.round(scale, roundingMode),
                 xNew = xNew.round(scale, roundingMode),
                 error = error,
             )

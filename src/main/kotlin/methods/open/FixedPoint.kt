@@ -12,16 +12,15 @@ data class FixedPointIterationResult(
 
     override val methodName = "Fixed Point"
 
+    override val columnNamesCsv = Csv(
+        "i",
+        "xOld",
+        "xNew",
+        "error",
+    )
+
     override fun getEquationString(xLast: RoundedDecimal) = "x = $expression"
 
-    override fun toString(): String {
-        val stringBuilder = StringBuilder("i, xOld, xNew, error\n")
-        for ((i, iteration) in iterations.withIndex()) {
-            stringBuilder.append("${i + 1}, $iteration\n")
-        }
-        stringBuilder.append(terminationCause.message)
-        return stringBuilder.toString()
-    }
 }
 
 data class FixedPointIteration(
@@ -29,7 +28,13 @@ data class FixedPointIteration(
     override val xNew: RoundedDecimal,
     override val error: Percentage,
 ) : Iteration() {
-    override fun toString() = "$xOld, $xNew, $error"
+
+    override val valuesCsv = Csv(
+        xOld,
+        xNew,
+        error,
+    )
+
 }
 
 fun runFixedPoint(

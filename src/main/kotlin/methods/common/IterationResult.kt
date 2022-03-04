@@ -14,6 +14,7 @@ abstract class IterationResult {
     abstract val methodName: String
     abstract val iterations: List<Iteration>
     abstract val terminationCause: TerminationCause
+    abstract val columnNamesCsv: Csv
 
     abstract fun getEquationString(xLast: RoundedDecimal): String
 
@@ -28,8 +29,17 @@ abstract class IterationResult {
         val fileName = "$outputDirectoryName/$methodName.csv"
         val file = File(fileName)
         file.delete()
-        file.writeText(toString())
+        file.writeText(toCsvString())
         println("Answer written to $fileName\n")
+    }
+
+    fun toCsvString(): String {
+        val stringBuilder = StringBuilder("$columnNamesCsv\n")
+        for ((i, iteration) in iterations.withIndex()) {
+            stringBuilder.append("${i + 1}, ${iteration.valuesCsv}\n")
+        }
+        stringBuilder.append(terminationCause.message)
+        return stringBuilder.toString()
     }
 
 }
@@ -37,6 +47,7 @@ abstract class IterationResult {
 abstract class Iteration {
     abstract val xNew: RoundedDecimal
     abstract val error: Percentage
+    abstract val valuesCsv: Csv
 }
 
 fun calculateError(
