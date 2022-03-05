@@ -40,7 +40,7 @@ data class BracketIteration(
     val yR: RoundedDecimal,
     override val xNew: RoundedDecimal,
     val yNew: RoundedDecimal,
-    override val error: Percentage,
+    override val error: Percentage?,
 ) : Iteration() {
 
     override val valuesCsv = Csv(
@@ -74,11 +74,11 @@ fun runIterativeBracketing(
 
     var xOld: BigDecimal? = null
 
-    var error = getMaxError(scale, roundingMode)
+    var error: Percentage? = null
 
     while (true) {
 
-        if (iterator >= minIterations && error.value.isZero) {
+        if (iterator >= minIterations && error?.value?.isZero == true) {
             return BracketIterationResult(f, methodName, iterations, TerminationCause.ZeroErrorReached)
         } else if (iterator >= maxIterations) {
             return BracketIterationResult(f, methodName, iterations, TerminationCause.MaxIterationsReached)
@@ -96,7 +96,7 @@ fun runIterativeBracketing(
             xOld = xOld,
             xNew = xNew,
             scale = scale,
-            roundingMode = roundingMode
+            roundingMode = roundingMode,
         )
 
         iterations.add(

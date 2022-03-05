@@ -1,13 +1,13 @@
 package methods.common
 
-data class Csv(val values: List<String>) {
+data class Csv<T>(val values: List<T>) {
 
-    constructor(vararg values: Any): this(values.toList().map { it.toString() })
+    constructor(vararg values: T): this(values.toList())
 
     override fun toString(): String {
         val csvBuilder = StringBuilder()
         for (value in values) {
-            csvBuilder.append("$value, ")
+            csvBuilder.append("${value ?: "N/A"}, ")
         }
         return csvBuilder.toString()
     }

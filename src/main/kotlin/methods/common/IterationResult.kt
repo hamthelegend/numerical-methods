@@ -14,7 +14,7 @@ abstract class IterationResult {
     abstract val methodName: String
     abstract val iterations: List<Iteration>
     abstract val terminationCause: TerminationCause
-    abstract val columnNamesCsv: Csv
+    abstract val columnNamesCsv: Csv<String>
 
     abstract fun getEquationString(xLast: RoundedDecimal): String
 
@@ -46,8 +46,8 @@ abstract class IterationResult {
 
 abstract class Iteration {
     abstract val xNew: RoundedDecimal
-    abstract val error: Percentage
-    abstract val valuesCsv: Csv
+    abstract val error: Percentage?
+    abstract val valuesCsv: Csv<Any?>
 }
 
 fun calculateError(
@@ -58,4 +58,3 @@ fun calculateError(
 ) =
     // ((xNew - xOld) / xNew).abs()
     xOld?.minus(xNew)?.divide(xNew, scale, roundingMode)?.abs()?.toPercentage(scale, roundingMode)
-        ?: 1.toBigDecimal().toPercentage(scale, roundingMode)

@@ -30,7 +30,7 @@ data class NewtonRaphsonIteration(
     val yOld: RoundedDecimal,
     val yPrimeOld: RoundedDecimal,
     override val xNew: RoundedDecimal,
-    override val error: Percentage,
+    override val error: Percentage?,
 ) : Iteration() {
 
     override val valuesCsv = Csv(
@@ -58,32 +58,32 @@ fun runNewtonRaphson(
     val iterations = mutableListOf<NewtonRaphsonIteration>()
 
     var xOld = initialX
-    var error = getMaxError(scale, roundingMode)
+    var error: Percentage? = null
 
     while (true) {
 
-        if (iterator >= minIterations && error.value.isZero) {
+        if (iterator >= minIterations && error?.value?.isZero == true) {
             return NewtonRaphsonIterationResult(f, iterations, TerminationCause.ZeroErrorReached)
         } else if(iterator >= maxIterations) {
             return NewtonRaphsonIterationResult(f, iterations, TerminationCause.MaxIterationsReached)
         }
 
-        val fxOld = f.calculate(xOld, scale, roundingMode)
-        val fPrimeXOld = fPrime.calculate(xOld, scale, roundingMode)
+        val yOld = f.calculate(xOld, scale, roundingMode)
+        val yPrimeOld = fPrime.calculate(xOld, scale, roundingMode)
 
-        val xNew = xOld - fxOld / fPrimeXOld
+        val xNew = xOld - yOld / yPrimeOld
         error = calculateError(
             xOld = xOld,
             xNew = xNew,
             scale = scale,
-            roundingMode = roundingMode
+            roundingMode = roundingMode,
         )
 
         iterations.add(
             NewtonRaphsonIteration(
                 xOld = xOld.round(scale, roundingMode),
-                yOld = fxOld.round(scale, roundingMode),
-                yPrimeOld = fPrimeXOld.round(scale, roundingMode),
+                yOld = yOld.round(scale, roundingMode),
+                yPrimeOld = yPrimeOld.round(scale, roundingMode),
                 xNew = xNew.round(scale, roundingMode),
                 error = error,
             )

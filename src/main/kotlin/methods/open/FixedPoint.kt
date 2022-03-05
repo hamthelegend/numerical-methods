@@ -26,7 +26,7 @@ data class FixedPointIterationResult(
 data class FixedPointIteration(
     val xOld: RoundedDecimal,
     override val xNew: RoundedDecimal,
-    override val error: Percentage,
+    override val error: Percentage?,
 ) : Iteration() {
 
     override val valuesCsv = Csv(
@@ -50,11 +50,11 @@ fun runFixedPoint(
 
     val iterations = mutableListOf<FixedPointIteration>()
     var xOld = initialX
-    var error = getMaxError(scale, roundingMode)
+    var error: Percentage? = null
 
     while(true) {
 
-        if (iterator >= minIterations && error.value.isZero) {
+        if (iterator >= minIterations && error?.value?.isZero == true) {
             return FixedPointIterationResult(g, iterations, TerminationCause.ZeroErrorReached)
         } else if(iterator >= maxIterations) {
             return FixedPointIterationResult(g, iterations, TerminationCause.MaxIterationsReached)
@@ -66,7 +66,7 @@ fun runFixedPoint(
             xOld = xOld,
             xNew = xNew,
             scale = scale,
-            roundingMode = roundingMode
+            roundingMode = roundingMode,
         )
 
         iterations.add(

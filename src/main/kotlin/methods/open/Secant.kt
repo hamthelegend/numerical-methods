@@ -33,7 +33,7 @@ data class SecantIteration(
     val yA: RoundedDecimal,
     val yB: RoundedDecimal,
     override val xNew: RoundedDecimal,
-    override val error: Percentage,
+    override val error: Percentage?,
 ) : Iteration() {
     override val valuesCsv = Csv(
         xA,
@@ -62,20 +62,20 @@ fun runSecant(
     var xA = initialXA
     var xB = initialXB
 
-    var error = getMaxError(scale, roundingMode)
+    var error: Percentage? = null
 
     while (true) {
 
-        if (iterator >= minIterations && error.value.isZero) {
+        if (iterator >= minIterations && error?.value?.isZero == true) {
             return SecantIterationResult(f, iterations, TerminationCause.ZeroErrorReached)
         } else if (iterator >= maxIterations) {
             return SecantIterationResult(f, iterations, TerminationCause.MaxIterationsReached)
         }
 
-        val fxA = f.calculate(xA, scale, roundingMode)
-        val fxB = f.calculate(xB, scale, roundingMode)
+        val yA = f.calculate(xA, scale, roundingMode)
+        val yB = f.calculate(xB, scale, roundingMode)
 
-        val xNew = xA - fxA * (xA - xB).divide(fxA - fxB, scale, roundingMode)
+        val xNew = xA - yA * (xA - xB).divide(yA - yB, scale, roundingMode)
 
         error = calculateError(
             xOld = xOld,
@@ -88,8 +88,8 @@ fun runSecant(
             SecantIteration(
                 xA = xA.round(scale, roundingMode),
                 xB = xB.round(scale, roundingMode),
-                yA = fxA.round(scale, roundingMode),
-                yB = fxB.round(scale, roundingMode),
+                yA = yA.round(scale, roundingMode),
+                yB = yB.round(scale, roundingMode),
                 xNew = xNew.round(scale, roundingMode),
                 error = error,
             )
