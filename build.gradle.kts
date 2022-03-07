@@ -3,10 +3,15 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.6.10"
     application
+    `maven-publish`
 }
 
-group = "com.hamthelegend"
-version = "0.1"
+val groupId = "com.hamthelegend"
+val artifactId = "numerical-methods"
+val versionId = "0.1"
+
+group = groupId
+version = versionId
 
 repositories {
     mavenCentral()
@@ -27,4 +32,16 @@ tasks.withType<KotlinCompile> {
 
 application {
     mainClass.set("MainKt")
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = groupId
+            artifactId = artifactId
+            version = versionId
+
+            from(components["java"])
+        }
+    }
 }
