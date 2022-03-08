@@ -3,6 +3,9 @@ package methods.common
 import java.io.File
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 enum class TerminationCause(val message: String) {
     MaxIterationsReached("Maximum iterations reached without reaching an absolute relative approximate error of zero."),
@@ -18,17 +21,18 @@ abstract class IterationResult {
 
     abstract fun getEquationString(xLast: RoundedDecimal): String
 
-    fun writeFile() {
+    fun writeFile(subfolderName: String) {
         val xLast = iterations.last().xNew
         println("$methodName: x ≈ $xLast for ${getEquationString(xLast)}")
         println(terminationCause.message)
 
-        val outputDirectoryName = "output"
+        val outputDirectoryName = "output/$subfolderName"
         val outputDirectory = File(outputDirectoryName)
-        if (!outputDirectory.exists()) outputDirectory.mkdir()
+        if (!outputDirectory.exists()) outputDirectory.mkdirs()
+
         val fileName = "$outputDirectoryName/$methodName.csv"
         val file = File(fileName)
-        file.delete()
+        if(file.exists()) file.delete()
         file.writeText(toCsvString())
         println("Answer written to $fileName\n")
     }
@@ -58,3 +62,15 @@ fun calculateError(
 ) =
     // ((xNew - xOld) / xNew).abs()
     xOld?.minus(xNew)?.divide(xNew, scale, roundingMode)?.abs()?.toPercentage(scale, roundingMode)
+
+fun List<IterationResult>.writeFiles(date: Date = Date()) {
+    val directory = date.formatToString()
+    for (iterationResult in this) {
+        iterationResult.writeFile(directory)
+    }
+}
+
+fun Date.formatToString(formatPattern: String = "yyyyMMdd-HHmmss"): String {
+    val format = SimpleDateFormat(formatPattern)
+    return format.format(this)
+}
