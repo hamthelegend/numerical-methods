@@ -1,6 +1,6 @@
-
 import methods.common.Default
 import methods.common.Fx
+import methods.common.writeFiles
 import methods.iterativebracketing.BracketInterval
 import methods.iterativebracketing.runBisection
 import methods.iterativebracketing.runFalsePosition
@@ -35,50 +35,52 @@ fun main() {
     // Example: val roundingMode = RoundingMode.HALF_UP /* to always round up 5 */
     /* END OF EDITABLE VALUES */
 
-    // Edit the values below this line at your own discretion
-    runBisection(
-        f = f,
-        initialInterval = interval,
-        minIterations = minIterations,
-        maxIterations = maxIterations,
-        scale = scale,
-        roundingMode = roundingMode,
-    ).writeFile()
+    listOf(
+        // Edit the values below this line at your own discretion
+        runBisection(
+            f = f,
+            initialInterval = interval,
+            minIterations = minIterations,
+            maxIterations = maxIterations,
+            scale = scale,
+            roundingMode = roundingMode,
+        ),
 
-    runFalsePosition(
-        f = f, initialInterval = interval,
-        minIterations = minIterations,
-        maxIterations = maxIterations,
-        scale = scale,
-        roundingMode = roundingMode,
-    ).writeFile()
+        runFalsePosition(
+            f = f, initialInterval = interval,
+            minIterations = minIterations,
+            maxIterations = maxIterations,
+            scale = scale,
+            roundingMode = roundingMode,
+        ),
 
-    runFixedPoint(
-        g = g, initialX = initialXA,
-        minIterations = minIterations,
-        maxIterations = maxIterations,
-        scale = scale,
-        roundingMode = roundingMode,
-    ).writeFile()
+        runFixedPoint(
+            g = g, initialX = initialXA,
+            minIterations = minIterations,
+            maxIterations = maxIterations,
+            scale = scale,
+            roundingMode = roundingMode,
+        ),
 
-    runNewtonRaphson(
-        f = f,
-        fPrime = fPrime,
-        initialX = initialXA,
-        minIterations = minIterations,
-        maxIterations = maxIterations,
-        scale = scale,
-        roundingMode = roundingMode,
-    ).writeFile()
+        runNewtonRaphson(
+            f = f,
+            fPrime = fPrime,
+            initialX = initialXA,
+            minIterations = minIterations,
+            maxIterations = maxIterations,
+            scale = scale,
+            roundingMode = roundingMode,
+        ),
 
-    runSecant(
-        f = f,
-        initialXA = initialXA,
-        initialXB = initialXB,
-        minIterations = minIterations,
-        maxIterations = maxIterations,
-        scale = scale,
-        roundingMode = roundingMode,
-    ).writeFile()
+        runSecant(
+            f = f,
+            initialXA = initialXA,
+            initialXB = initialXB,
+            minIterations = minIterations,
+            maxIterations = maxIterations,
+            scale = scale,
+            roundingMode = roundingMode,
+        )
+    ).writeFiles()
 
 }
